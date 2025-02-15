@@ -1,0 +1,56 @@
+#:import Window kivy.core.window.Window
+#:import PRIMARY utils.loading.PRIMARY
+#:import SECONDARY utils.loading.SECONDARY
+#:import ACCENT utils.loading.ACCENT
+#:import TEXT utils.loading.TEXT
+
+<HomeConstructor>:
+    orientation: 'vertical'
+    padding: 20
+    spacing: 10
+    
+    canvas.before:
+        Color:
+            rgba: PRIMARY
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_y: 0.9
+        padding: 20
+        spacing: 15
+        canvas.before:
+            Color:
+                rgba: SECONDARY
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [15, 15, 15, 15]
+
+        Label:
+            text: 'Welcome to Your Diary'
+            size_hint_y: 0.2
+            font_name: 'Bold'
+            font_size: self.height * 0.3
+            color: TEXT
+
+        Button:
+            text: 'New Diary Entry'
+            size_hint_y: 0.15
+            background_color: ACCENT
+            color: TEXT
+            font_name: "Regular"
+            on_press: root.go_to_diary()
+
+        Button:
+            text: 'View Past Entries'
+            size_hint_y: 0.15
+            background_color: ACCENT
+            color: TEXT
+            font_name: "Regular"
+            on_press: root.parent.manager.current = 'history'
+
+<HomeScreen>:
+    HomeConstructor: 

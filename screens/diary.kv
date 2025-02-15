@@ -1,0 +1,80 @@
+#:import Window kivy.core.window.Window
+#:import primary utils.loading.PRIMARY
+#:import secondary utils.loading.SECONDARY
+#:import accent utils.loading.ACCENT
+#:import text utils.loading.TEXT
+
+<DiaryConstructor>:
+    cols: 1
+    canvas.before:
+        Color:
+            rgba: primary
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    orientation:"vertical"
+    Label:
+        text: "Your topic"
+        font_size: Window.height/28
+        size_hint_y : 0.08
+        font_name: "Regular"
+        color: text
+        text_size: self.size
+        halign: 'left'
+        padding: [Window.width/60, 0, 0,0]
+
+
+    TextInput:
+        id: diary_input
+        minimum_width : 600
+        hint_text: "enter your text here"
+        font_name: "Regular"
+        font_size: Window.height/35
+        padding: Window.width/60
+        size_hint_y: 0.5
+        multiline: True
+        background_color: secondary
+        foreground_color: text
+
+    Widget:
+        id: text_button_seperator
+        size_hint_y: 0.03
+
+    Button:
+        id: button
+        background_color: 0, 0, 0, 0 
+        canvas.before:
+            Color:
+                rgba: primary
+            Rectangle: 
+                pos: self.pos
+                size: self.size
+            Color:
+                rgba: accent
+            Line:
+                width: 2  
+                rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)  # Last two numbers are corner radius
+        font_name: "Bold"
+        font_size: Window.height/30
+        color: text
+        text: "nekam to poslat"
+        size_hint_y: 0.08
+        pos_hint: {"center_x" : 0.5}
+        size_hint_x: 0.6
+        on_press: root.submit_text(diary_input.text)
+
+    Widget:
+        id: placeholder 
+        size_hint_y: 0.3
+   
+    BoxLayout:
+        id: labels_container
+        size_hint_y: 0.01
+        orientation: 'vertical'
+        spacing: 0  # Reduces space between labels
+        padding: 0  # Removes padding around the container
+    
+<DiaryScreen>:
+    DiaryConstructor:
+    
