@@ -21,7 +21,7 @@ def get_emotions(text):
     response = requests.post(API_URL, headers=headers, json=payload)
     emotions = []
     for xd in response.json():
-        for i in xd[:15]:
+        for i in xd[:10]:
             if 'label' in i:
                 emotions.extend([i['label'], i['score']])
 
@@ -34,8 +34,29 @@ def get_emotions(text):
             break
         API_URL = f"https://api-inference.huggingface.co/models/{model}"
         query = {
-            "inputs": f"I have a set of emotions with the following scores: {emotions}. These are the most prevalent emotions in my data. I want you to create one-word umbrella terms that combine these emotions into a single concept. The terms should be meaningful, evocative, and ideally draw from other languages if they better capture the nuances of the emotional blend. For example, words like 'saudade' (Portuguese) or 'hiraeth' (Welsh) might be good inspirations. Generate 6 umbrella terms. Format each response exactly like this, one per line:\nterm : brief definition\n\nDo not include any other text in your response. No bold text, just plain text. PLESE DONT INCLUDE ANY OTHER TEXT IN YOUR RESPONSE"
-        }
+            "inputs": f"""I have a set of emotions with the following scores: {emotions}. Generate 6 unique and evocative umbrella terms that capture the nuanced combinations of these emotions.
+
+Format your response EXACTLY like this, with one term per line:
+term1 : definition1
+term2 : definition2
+term3 : definition3
+term4 : definition4
+term5 : definition5
+term6 : definition6
+
+Rules:
+1. Each term should be a single unique word
+2. Use mostly English terms, with non-English wordswhen they capture a complex emotion
+3. Focus on rare or poetic words (like 'ephemeral' or 'ethereal'), can be from any language
+4. Definitions must be brief (5-10 words) but evocative
+5. No basic emotions like 'happy' or 'sad'
+6. All text should be lowercase
+7. No blank lines between terms
+8. No additional text or formatting
+"""
+}
+#9. If the the term is not in english, make sure to include the language in the definition
+
         response = requests.post(API_URL, headers=headers, json=query)
         text = response.json()[0]['generated_text'][len(query["inputs"]) + 1:].split("\n")
         for i in text:

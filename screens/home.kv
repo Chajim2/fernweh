@@ -23,34 +23,65 @@
         spacing: 15
         canvas.before:
             Color:
-                rgba: SECONDARY
+                rgba: PRIMARY
             RoundedRectangle:
                 pos: self.pos
                 size: self.size
                 radius: [15, 15, 15, 15]
 
         Label:
-            text: 'Welcome to Your Diary'
+            text: 'dont you dare go hollow'
             size_hint_y: 0.2
             font_name: 'Bold'
-            font_size: self.height * 0.3
+            font_size: min(self.width * 0.8, self.height * 0.1)
             color: TEXT
 
         Button:
-            text: 'New Diary Entry'
-            size_hint_y: 0.15
-            background_color: ACCENT
+            font_size: self.height * 0.15
+            text: 'new diary entry'
+            size_hint_y: 0.1
+            size_hint_x: 0.6
+            pos_hint: {'center_x': 0.5}
+            background_color: 0, 0, 0, 0  # Transparent background
+            canvas.before:
+                Color:
+                    rgba: PRIMARY
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [15, 15, 15, 15]
+                Color:
+                    rgba: ACCENT
+                Line:
+                    width: 2
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, 15, 15)
             color: TEXT
             font_name: "Regular"
             on_press: root.go_to_diary()
-
+        Widget:
+            size_hint_y: 0.01
         Button:
-            text: 'View Past Entries'
-            size_hint_y: 0.15
-            background_color: ACCENT
+            text: 'view past entries'
+            size_hint_y: 0.1
+            size_hint_x: 0.6
+            pos_hint: {'center_x': 0.5}
+            background_color: 0, 0, 0, 0  # Transparent background
+            canvas.before:
+                Color:
+                    rgba: PRIMARY
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [15, 15, 15, 15]
+                Color:
+                    rgba: ACCENT
+                Line:
+                    width: 2
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, 15, 15)
+            font_size: self.height * 0.15
             color: TEXT
             font_name: "Regular"
-            on_press: root.parent.manager.current = 'history'
+            on_press: root.go_to_history()
 
 <HomeScreen>:
     HomeConstructor: 

@@ -4,6 +4,7 @@ from screens.confirm import ConfirmationScreen
 from screens.home import HomeScreen
 from screens.history import HistoryScreen
 from kivy.uix.screenmanager import ScreenManager
+from utils.loading import load_fonts
 
 class Diary(App):
     def build(self):
@@ -12,8 +13,8 @@ class Diary(App):
         sm.add_widget(DiaryScreen(name='diary'))
         sm.add_widget(ConfirmationScreen(name='confirm'))
         sm.add_widget(HistoryScreen(name='history'))
-        # Set initial screen to home
         sm.current = 'home'
+        load_fonts()
         return sm
 
 if __name__ == '__main__':

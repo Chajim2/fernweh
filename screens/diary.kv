@@ -1,25 +1,25 @@
 #:import Window kivy.core.window.Window
-#:import primary utils.loading.PRIMARY
-#:import secondary utils.loading.SECONDARY
-#:import accent utils.loading.ACCENT
-#:import text utils.loading.TEXT
+#:import PRIMARY utils.loading.PRIMARY
+#:import SECONDARY utils.loading.SECONDARY
+#:import ACCENT utils.loading.ACCENT
+#:import TEXT utils.loading.TEXT
 
 <DiaryConstructor>:
     cols: 1
     canvas.before:
         Color:
-            rgba: primary
+            rgba: PRIMARY
         Rectangle:
             pos: self.pos
             size: self.size
 
     orientation:"vertical"
     Label:
-        text: "Your topic"
+        text: "your topic"
         font_size: Window.height/28
         size_hint_y : 0.08
         font_name: "Regular"
-        color: text
+        color: TEXT
         text_size: self.size
         halign: 'left'
         padding: [Window.width/60, 0, 0,0]
@@ -34,8 +34,8 @@
         padding: Window.width/60
         size_hint_y: 0.5
         multiline: True
-        background_color: secondary
-        foreground_color: text
+        background_color: SECONDARY
+        foreground_color: TEXT
 
     Widget:
         id: text_button_seperator
@@ -46,18 +46,18 @@
         background_color: 0, 0, 0, 0 
         canvas.before:
             Color:
-                rgba: primary
+                rgba: PRIMARY
             Rectangle: 
                 pos: self.pos
                 size: self.size
             Color:
-                rgba: accent
+                rgba: ACCENT
             Line:
                 width: 2  
-                rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)  # Last two numbers are corner radius
+                rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
         font_name: "Bold"
         font_size: Window.height/30
-        color: text
+        color: TEXT
         text: "nekam to poslat"
         size_hint_y: 0.08
         pos_hint: {"center_x" : 0.5}

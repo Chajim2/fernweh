@@ -14,7 +14,6 @@ class HistoryConstructor(BoxLayout):
         self.db = DiaryDatabase()
         
     def on_kv_post(self, base_widget):
-        # This will be called after the kv file is loaded and ids are ready
         Clock.schedule_once(self.load_entries, 0)
     
     def load_entries(self, *args):
@@ -22,11 +21,9 @@ class HistoryConstructor(BoxLayout):
         entries_text = ""
         
         for entry in entries:
-            # Convert timestamp string to datetime
             timestamp = datetime.strptime(entry['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
             formatted_date = timestamp.strftime('%B %d, %Y - %I:%M %p')
             
-            # Format each entry
             entries_text += f"\n[b]{formatted_date}[/b]\n"
             entries_text += f"{entry['text']}\n"
             entries_text += f"Emotions: {', '.join(entry['emotions'])}\n"

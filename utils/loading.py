@@ -3,9 +3,9 @@ from utils.ai import get_emotions
 import time
 
 def load_fonts():
-    LabelBase.register(name='Italics', 
+    LabelBase.register(name='Italic', 
                     fn_regular='utils/font/LiberationSerif-Italic.ttf')
-    LabelBase.register(name='BoldItalics', 
+    LabelBase.register(name='BoldItalic', 
                     fn_regular='utils/font/LiberationSerif-BoldItalic.ttf')
     LabelBase.register(name='Bold',
                     fn_regular='utils/font/LiberationSerif-Bold.ttf') 

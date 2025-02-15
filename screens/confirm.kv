@@ -17,55 +17,93 @@
     BoxLayout:
         orientation: 'vertical'
         padding: 20
-        spacing: 10
-        canvas.before:
-            Color:
-                rgba: SECONDARY
-            RoundedRectangle:
-                pos: self.pos
-                size: self.size
-                radius: [15, 15, 15, 15]
-
-        Label:
-            text: 'Confirm Your Entry'
-            size_hint_y: 0.1
-            font_name: 'Bold'
-            font_size: self.height * 0.5
-            color: TEXT
-
-        ScrollView:
-            size_hint_y: 0.4
-            Label:
-                id: diary_preview
-                size_hint_y: None
-                height: self.texture_size[1]
-                text_size: self.width, None
-                padding: 10, 10
-                color: TEXT
-
-        Label:
-            id: emotions_summary
-            size_hint_y: 0.3
-            text: 'Selected emotions:'
-            text_size: self.width, None
-            halign: 'left'
-            valign: 'top'
-            color: TEXT
-
+        spacing: 30
+        
         BoxLayout:
-            size_hint_y: 0.2
-            spacing: 10
+            orientation: 'vertical'
+            padding: 20
+            spacing: 20
+            canvas.before:
+                Color:
+                    rgba: PRIMARY
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [15, 15, 15, 15]
 
-            Button:
-                text: 'Go Back'
-                background_color: SECONDARY
+            Label:
+                text: 'confirm your entry'
+                size_hint_y: 0.1
+                font_name: 'Bold'
+                font_size: Window.height/28
                 color: TEXT
-                font_name: "Regular"
-                on_press: root.go_back()
 
-            Button:
-                text: 'Confirm'
-                background_color: PRIMARY
+            ScrollView:
+                size_hint_y: 0.4
+                Label:
+                    id: diary_preview
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    text_size: self.width, None
+                    padding: 10, 10
+                    color: TEXT
+                    font_name: "Regular"
+                    font_size: Window.height/35
+
+            Label:
+                id: emotions_summary
+                size_hint_y: 0.3
+                text: 'selected emotions:'
+                text_size: self.width, None
+                halign: 'left'
+                valign: 'top'
                 color: TEXT
-                font_name: "Regular"
-                on_press: root.confirm_entry()
+                font_name: "BoldItalic"
+                font_size: Window.height/35
+
+            BoxLayout:
+                size_hint_y: 0.2
+                spacing: 20
+                padding: [40, 10]
+
+                Button:
+                    text: 'go back'
+                    size_hint_x: 0.5
+                    background_color: 0, 0, 0, 0
+                    canvas.before:
+                        Color:
+                            rgba: PRIMARY
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [15, 15, 15, 15]
+                        Color:
+                            rgba: ACCENT
+                        Line:
+                            width: 2
+                            rounded_rectangle: (self.x, self.y, self.width, self.height, 15, 15)
+                    color: TEXT
+                    font_name: "Regular"
+                    font_size: Window.height/35
+                    on_press: root.go_back()
+
+                Button:
+                    text: 'confirm'
+                    size_hint_x: 0.5
+                    background_color: 0, 0, 0, 0
+                    canvas.before:
+                        Color:
+                            rgba: PRIMARY
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [15, 15, 15, 15]
+                        Color:
+                            rgba: ACCENT
+                        Line:
+                            width: 2
+                            rounded_rectangle: (self.x, self.y, self.width, self.height, 15, 15)
+                    color: TEXT
+                    font_name: "Regular"
+                    font_size: Window.height/35
+                    on_press: root.confirm_entry()

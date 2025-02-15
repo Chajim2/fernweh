@@ -10,8 +10,13 @@ class HomeConstructor(BoxLayout):
         super().__init__(**kwargs)
 
     def go_to_diary(self):
-        # Navigate to diary screen
         self.parent.manager.current = 'diary'
+
+    def go_to_history(self):
+        history_screen = self.parent.manager.get_screen('history')
+        history_constructor = history_screen.children[0]
+        history_constructor.load_entries()
+        self.parent.manager.current = 'history'
 
 class HomeScreen(Screen):
     def __init__(self, **kwargs):
