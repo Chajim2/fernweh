@@ -5,6 +5,7 @@ from utils.loading import load_colors
 from db.db import DiaryDatabase
 from datetime import datetime
 from kivy.clock import Clock
+from utils.loading import resource_path
 
 PRIMARY, SECONDARY, ACCENT, TEXT = load_colors()
 
@@ -37,5 +38,5 @@ class HistoryConstructor(BoxLayout):
 
 class HistoryScreen(Screen):
     def __init__(self, **kwargs):
-        Builder.load_file('screens/history.kv')
+        Builder.load_file(resource_path('screens/history.kv'))
         super().__init__(**kwargs) 

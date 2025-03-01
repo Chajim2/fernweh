@@ -46,7 +46,7 @@ term6 : definition6
 
 Rules:
 1. Each term should be a single unique word
-2. Use mostly English terms, with non-English wordswhen they capture a complex emotion
+2. Use English and foreign terms about 50% of the time each, with non-English wordswhen they capture a complex emotion
 3. Focus on rare or poetic words (like 'ephemeral' or 'ethereal'), can be from any language
 4. Definitions must be brief (5-10 words) but evocative
 5. No basic emotions like 'happy' or 'sad'
@@ -55,7 +55,6 @@ Rules:
 8. No additional text or formatting
 """
 }
-#9. If the the term is not in english, make sure to include the language in the definition
 
         response = requests.post(API_URL, headers=headers, json=query)
         text = response.json()[0]['generated_text'][len(query["inputs"]) + 1:].split("\n")

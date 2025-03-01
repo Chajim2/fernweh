@@ -1,0 +1,7 @@
+Error: cannot import name 'resource_path' from 'main' (c:\Users\jachy_u1b2b1i\Desktop\codes\pathing\gui\main.py)
+Traceback (most recent call last):
+  File "c:\Users\jachy_u1b2b1i\Desktop\codes\pathing\gui\main.py", line 19, in <module>
+    from screens.home import HomeScreen
+  File "c:\Users\jachy_u1b2b1i\Desktop\codes\pathing\gui\screens\home.py", line 5, in <module>
+    from main import resource_path
+ImportError: cannot import name 'resource_path' from 'main' (c:\Users\jachy_u1b2b1i\Desktop\codes\pathing\gui\main.py)

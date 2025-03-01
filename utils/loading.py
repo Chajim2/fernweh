@@ -1,16 +1,23 @@
 from kivy.core.text import LabelBase
-from utils.ai import get_emotions
-import time
+import sys
+import os
+
+def resource_path(relative_path):
+            try:
+                base_path = sys._MEIPASS
+            except Exception:
+                base_path = os.path.abspath(".")
+            return os.path.join(base_path, relative_path) 
 
 def load_fonts():
     LabelBase.register(name='Italic', 
-                    fn_regular='utils/font/LiberationSerif-Italic.ttf')
+                    fn_regular=resource_path('utils/font/LiberationSerif-Italic.ttf'))
     LabelBase.register(name='BoldItalic', 
-                    fn_regular='utils/font/LiberationSerif-BoldItalic.ttf')
+                    fn_regular=resource_path('utils/font/LiberationSerif-BoldItalic.ttf'))
     LabelBase.register(name='Bold',
-                    fn_regular='utils/font/LiberationSerif-Bold.ttf') 
+                    fn_regular=resource_path('utils/font/LiberationSerif-Bold.ttf')) 
     LabelBase.register(name='Regular',
-                    fn_regular='utils/font/LiberationSerif-Regular.ttf')
+                    fn_regular=resource_path('utils/font/LiberationSerif-Regular.ttf'))
 
 def load_colors():
     PRIMARY = (15.7/100, 17.3/100, 20.4/100, 1)

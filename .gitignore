@@ -1,2 +1,12 @@
 main.spec
+build/
+dist/
+
 diary_entries.db
+
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python

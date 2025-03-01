@@ -1,7 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
-from utils.loading import load_colors
+from utils.loading import load_colors, resource_path
 
 PRIMARY, SECONDARY, ACCENT, TEXT = load_colors()
 
@@ -20,5 +20,5 @@ class HomeConstructor(BoxLayout):
 
 class HomeScreen(Screen):
     def __init__(self, **kwargs):
-        Builder.load_file('screens/home.kv')
+        Builder.load_file(resource_path('screens/home.kv'))
         super().__init__(**kwargs)

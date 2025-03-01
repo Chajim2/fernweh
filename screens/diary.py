@@ -7,6 +7,7 @@ from utils.ai import get_emotions
 from kivy.clock import Clock
 from utils.loading import load_colors
 from kivy.lang import Builder
+from utils.loading import resource_path
 
 PRIMARY, SECONDARY, ACCENT, TEXT = load_colors()
 
@@ -96,7 +97,7 @@ class DiaryConstructor(BoxLayout):
 
 class DiaryScreen(Screen):
     def __init__(self, **kwargs):
-        Builder.load_file('screens/diary.kv')
+        Builder.load_file(resource_path('screens/diary.kv'))
         super(DiaryScreen, self).__init__(**kwargs)
         self.diary_constructor = DiaryConstructor()
         self.add_widget(self.diary_constructor)

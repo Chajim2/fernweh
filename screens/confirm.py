@@ -2,19 +2,19 @@ from kivy.uix.screenmanager import Screen
 from kivy.lang import Builder
 from utils.loading import load_colors
 from db.db import DiaryDatabase
+from utils.loading import resource_path
+
 
 PRIMARY, SECONDARY, ACCENT, TEXT = load_colors()
 
 class ConfirmationScreen(Screen):
     def __init__(self, **kwargs):
-        Builder.load_file('screens/confirm.kv')
+        Builder.load_file(resource_path('screens/confirm.kv'))
         super().__init__(**kwargs)
         self.diary_text = ""
         self.emotions = []
         self.db = DiaryDatabase()
         
-
-
     def display_summary(self, diary_text, emotions):
         self.diary_text = diary_text
         self.emotions = emotions

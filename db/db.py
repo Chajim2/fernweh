@@ -1,9 +1,10 @@
 import sqlite3
 from datetime import datetime
+from utils.loading import resource_path
 
 class DiaryDatabase:
     def __init__(self):
-        self.conn = sqlite3.connect('diary_entries.db')
+        self.conn = sqlite3.connect(resource_path('db/diary_entries.db'))
         self.create_tables()
 
     def create_tables(self):
