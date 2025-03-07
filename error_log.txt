@@ -1,7 +1,53 @@
-Error: cannot import name 'resource_path' from 'main' (c:\Users\jachy_u1b2b1i\Desktop\codes\pathing\gui\main.py)
+Error: 'Diary' object has no attribute 'sign_up'
 Traceback (most recent call last):
-  File "c:\Users\jachy_u1b2b1i\Desktop\codes\pathing\gui\main.py", line 19, in <module>
-    from screens.home import HomeScreen
-  File "c:\Users\jachy_u1b2b1i\Desktop\codes\pathing\gui\screens\home.py", line 5, in <module>
-    from main import resource_path
-ImportError: cannot import name 'resource_path' from 'main' (c:\Users\jachy_u1b2b1i\Desktop\codes\pathing\gui\main.py)
+  File "c:\Users\jachy_u1b2b1i\Desktop\codes\pathing\gui\main.py", line 42, in <module>
+    Diary().run()
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\app.py", line 956, in run
+    runTouchApp()
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\base.py", line 574, in runTouchApp
+    EventLoop.mainloop()
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\base.py", line 339, in mainloop
+    self.idle()
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\base.py", line 383, in idle
+    self.dispatch_input()
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\base.py", line 334, in dispatch_input
+    post_dispatch_input(*pop(0))
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\base.py", line 263, in post_dispatch_input
+    listener.dispatch('on_motion', etype, me)
+  File "kivy\\_event.pyx", line 731, in kivy._event.EventDispatcher.dispatch
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\core\window\__init__.py", line 1709, in on_motion
+    self.dispatch('on_touch_down', me)
+  File "kivy\\_event.pyx", line 731, in kivy._event.EventDispatcher.dispatch
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\core\window\__init__.py", line 1726, in on_touch_down
+    if w.dispatch('on_touch_down', touch):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "kivy\\_event.pyx", line 731, in kivy._event.EventDispatcher.dispatch
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\uix\screenmanager.py", line 1210, in on_touch_down
+    return super(ScreenManager, self).on_touch_down(touch)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\uix\widget.py", line 589, in on_touch_down
+    if child.dispatch('on_touch_down', touch):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "kivy\\_event.pyx", line 731, in kivy._event.EventDispatcher.dispatch
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\uix\relativelayout.py", line 306, in on_touch_down
+    ret = super(RelativeLayout, self).on_touch_down(touch)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\uix\widget.py", line 589, in on_touch_down
+    if child.dispatch('on_touch_down', touch):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "kivy\\_event.pyx", line 731, in kivy._event.EventDispatcher.dispatch
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\uix\widget.py", line 589, in on_touch_down
+    if child.dispatch('on_touch_down', touch):
+       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "kivy\\_event.pyx", line 727, in kivy._event.EventDispatcher.dispatch
+  File "kivy\\_event.pyx", line 1307, in kivy._event.EventObservers.dispatch
+  File "kivy\\_event.pyx", line 1191, in kivy._event.EventObservers._dispatch
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\lang\builder.py", line 60, in custom_callback
+    exec(__kvlang__.co_value, idmap)
+  File "C:\Users\jachy_u1b2b1i\Desktop\codes\pathing\gui\screens\login.kv", line 56, in <module>
+    on_touch_down: app.sign_up()
+    ^^^^^^^^^^^
+  File "C:\Users\jachy_u1b2b1i\AppData\Local\Programs\Python\Python312\Lib\site-packages\kivy\lang\parser.py", line 83, in __getattribute__
+    return getattr(object.__getattribute__(self, '_obj'), name)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Diary' object has no attribute 'sign_up'

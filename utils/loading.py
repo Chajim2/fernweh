@@ -1,6 +1,8 @@
 from kivy.core.text import LabelBase
 import sys
 import os
+from kivy.uix.popup import Popup
+from kivy.uix.label import Label
 
 def resource_path(relative_path):
             try:
@@ -19,6 +21,10 @@ def load_fonts():
     LabelBase.register(name='Regular',
                     fn_regular=resource_path('utils/font/LiberationSerif-Regular.ttf'))
 
+def show_popup(message):
+        popup = Popup(title='Login Status', content=Label(text=message), size_hint=(0.6, 0.4))
+        popup.open() 
+
 def load_colors():
     PRIMARY = (15.7/100, 17.3/100, 20.4/100, 1)
     SECONDARY = (62/255, 68/255, 81/ 255, 1)
@@ -32,5 +38,21 @@ PRIMARY, SECONDARY, ACCENT, TEXT = load_colors()
 def fake_get_emotions(text):
     return [["sad" , "u real sad bro"], ['hopeful', 'u might not be completely cooked g'], ['lost' , 'lost in the heat of it all']]
 
-def save_entry(name, text):
-    pass
+class UserState:
+    state = "Logged Out"
+    id = None
+    @classmethod
+    def set_state(cls, state):
+         cls.state = state
+    @classmethod
+    def get_state(cls, state):
+         return cls.state
+    @classmethod
+    def set_user_id(cls, user_id):
+        cls.user_id = user_id  # Set the user ID
+
+    @classmethod
+    def get_user_id(cls):
+        return cls.user_id  # Get the user ID
+    
+    
