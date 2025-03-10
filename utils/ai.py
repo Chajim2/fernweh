@@ -12,19 +12,11 @@ def translate_to_english(text):
 def get_emotions(text):
     if detect(text) != "en":
         text = translate_to_english(text)
-    API_URL = "https://api-inference.huggingface.co/models/SamLowe/roberta-base-go_emotions"
     headers = {"Authorization": "Bearer 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"}
     payload = { 
         "inputs": text
         }
-
-    response = requests.post(API_URL, headers=headers, json=payload)
-    emotions = []
-    for xd in response.json():
-        for i in xd[:10]:
-            if 'label' in i:
-                emotions.extend([i['label'], i['score']])
-
+    
 
     models = ["google/gemma-2-27b-it", "google/gemma-2-9b-it", "mistralai/Mistral-7B-Instruct-v0.3",
               "google/gemma-2-70b-it","deepseek-ai/DeepSeek-R1-Distill-Qwen-1.5B"]
@@ -34,8 +26,7 @@ def get_emotions(text):
             break
         API_URL = f"https://api-inference.huggingface.co/models/{model}"
         query = {
-            "inputs": f"""I have a set of emotions with the following scores: {emotions}. Generate 6 unique and evocative umbrella terms that capture the nuanced combinations of these emotions.
-
+            "inputs": f"""I have this text: {text} (end of text). Analyze the sentiment and emotions in the text and  Generate 6 unique and evocative umbrella terms that capture the nuanced feelins expressed.
 Format your response EXACTLY like this, with one term per line:
 term1 : definition1
 term2 : definition2
@@ -65,4 +56,19 @@ Rules:
     return out
 
 
-#print(get_emotions("My family is dealing with one problem - an early death. Whether on my mother's or father's side, it always came sooner than it should have. And now it's happening again - my father's brother is in the final stages of brain cancer and the doctors say he has about a year to live. It's a powerful experience for me. For the first time in my adult life, I am dealing with the death of a close relative. And maybe that's why I've been thinking a lot lately about justice, faith, and what comes after death.How can it be fair that a person who lived humbly, worked and led an ordinary, modest life now faces inevitable death? While so many other deserving people not only continue to live, but even become American presidents. What the hell kind of justice is that?"))
+def analyze_emotions(text):
+    API_URL = "https://api-inference.huggingface.co/models/SamLowe/roberta-base-go_emotions"
+    headers = {"Authorization": "Bearer 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"}
+    payload = { 
+        "inputs": text
+        }
+    response = requests.post(API_URL, headers=headers, json=payload)
+    emotions = []
+    for xd in response.json():
+        for i in xd[:10]:
+            if 'label' in i:
+                emotions.extend([i['label'], i['score']])
+    
+
+   
+

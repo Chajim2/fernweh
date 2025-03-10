@@ -3,6 +3,9 @@ import sys
 import os
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+import requests
+
+URL = "https://chajim.pythonanywhere.com/"
 
 def resource_path(relative_path):
             try:
@@ -10,6 +13,13 @@ def resource_path(relative_path):
             except Exception:
                 base_path = os.path.abspath(".")
             return os.path.join(base_path, relative_path) 
+
+def is_connected():
+    try:
+        resp = requests.get("https://google.com", timeout = 2)
+        return resp.status_code == 200
+    except:
+         return False
 
 def load_fonts():
     LabelBase.register(name='Italic', 
@@ -40,7 +50,7 @@ def fake_get_emotions(text):
 
 class UserState:
     state = "Logged Out"
-    id = None
+    user_id = None
     @classmethod
     def set_state(cls, state):
          cls.state = state

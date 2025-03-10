@@ -1,6 +1,6 @@
 from kivy.uix.screenmanager import Screen
 from kivy.lang import Builder
-from utils.loading import load_colors
+from utils.loading import load_colors, UserState
 from db.db import DiaryDatabase
 from utils.loading import resource_path
 

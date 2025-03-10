@@ -1,7 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.lang import Builder
 import requests
-from utils.loading import resource_path, UserState, show_popup
+from utils.loading import resource_path, UserState, show_popup, is_connected
 
 URL = "https://chajim.pythonanywhere.com/login"
 
