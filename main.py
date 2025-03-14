@@ -8,6 +8,7 @@ from screens.diary import DiaryScreen
 from screens.confirm import ConfirmationScreen
 from screens.home import HomeScreen
 from screens.history import HistoryScreen
+from screens.profile import ProfileScreen
 from screens.login import LoginScreen
 from screens.register import RegisterScreen
 from kivy.uix.screenmanager import ScreenManager
@@ -22,6 +23,7 @@ class Diary(App):
         sm.add_widget(HistoryScreen(name='history'))
         sm.add_widget(LoginScreen(name = 'login'))
         sm.add_widget(RegisterScreen(name='register'))
+        sm.add_widget(ProfileScreen(name='profile'))
         sm.current = 'login'
         load_fonts()
         UserState.set_state("Logged out")

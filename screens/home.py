@@ -18,6 +18,9 @@ class HomeConstructor(BoxLayout):
         history_constructor.load_entries()
         self.parent.manager.current = 'history'
 
+    def go_to_profile(self):
+        self.parent.manager.current = 'profile'
+
 class HomeScreen(Screen):
     def __init__(self, **kwargs):
         Builder.load_file(resource_path('screens/home.kv'))
