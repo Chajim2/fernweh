@@ -4,7 +4,7 @@
 #:import ACCENT utils.loading.ACCENT
 #:import TEXT utils.loading.TEXT
 
-<FriendLabel@Label>:
+<RequestLabel>:
     size_hint_y: None
     height: Window.height/15
     canvas.before:
@@ -14,9 +14,6 @@
             pos: self.pos
             size: self.size
             radius: [10,]
-    color: TEXT
-    font_name: "Regular"
-    font_size: Window.height/35
 
 <ProfileScreen>:
     canvas.before:
@@ -31,30 +28,15 @@
         padding: [Window.width/20, Window.height/20]
         spacing: Window.height/40
 
-        Label:
-            text: "Profile"
-            font_size: Window.height/20
-            size_hint_y: 0.1
-            font_name: "Bold"
-            color: TEXT
-
+        # Home button at top
         BoxLayout:
-            size_hint_y: 0.15
+            size_hint_y: 0.1
             spacing: Window.width/40
-
-            TextInput:
-                id: friend_input
-                hint_text: "Enter friend's username"
-                font_name: "Regular"
-                font_size: Window.height/35
-                padding: [Window.width/60, 0]
-                background_color: SECONDARY
-                foreground_color: TEXT
-                multiline: False
-                size_hint_x: 0.7
-
+            Widget:
+                size_hint_x: 0.8
             Button:
-                text: "Add Friend"
+                text: "home"
+                size_hint_x: 0.2
                 background_color: 0, 0, 0, 0 
                 canvas.before:
                     Color:
@@ -70,9 +52,47 @@
                 font_name: "Bold"
                 font_size: Window.height/35
                 color: TEXT
-                size_hint_x: 0.3
-                on_press: root.add_friend(friend_input.text)
+                on_press: root.go_to_home()
+            
+            
 
+        # Friend request input area
+        BoxLayout:
+            size_hint_y: 0.15
+            spacing: Window.width/40
+            
+            TextInput:
+                id: friend_input
+                hint_text: "Enter friend's username"
+                font_name: "Regular"
+                font_size: Window.height/35
+                padding: [Window.width/60, 0]
+                background_color: SECONDARY
+                foreground_color: TEXT
+                multiline: False
+                size_hint_x: 0.7
+            
+            Button:
+                text: "Add Friend"
+                size_hint_x: 0.3
+                background_color: 0, 0, 0, 0 
+                canvas.before:
+                    Color:
+                        rgba: PRIMARY
+                    Rectangle: 
+                        pos: self.pos
+                        size: self.size
+                    Color:
+                        rgba: ACCENT
+                    Line:
+                        width: 2  
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
+                font_name: "Bold"
+                font_size: Window.height/35
+                color: TEXT
+                on_press: root.send_friend_request(friend_input.text)
+
+        # Friends List Section
         Label:
             text: "Friends List"
             font_size: Window.height/25
@@ -83,11 +103,48 @@
             text_size: self.size
 
         ScrollView:
-            size_hint_y: 0.65
-
+            size_hint_y: 0.3
             BoxLayout:
                 id: friends_container
                 orientation: 'vertical'
                 size_hint_y: None
                 height: self.minimum_height
-                spacing: Window.height/40 
+                spacing: Window.height/40
+
+        # Friend Requests Section
+        Label:
+            text: "Friend Requests"
+            font_size: Window.height/25
+            size_hint_y: 0.1
+            font_name: "Bold"
+            color: TEXT
+            halign: 'left'
+            text_size: self.size
+
+        ScrollView:
+            size_hint_y: 0.3
+            BoxLayout:
+                id: requests_container
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                spacing: Window.height/40
+        
+<FriendLabel>:
+    size_hint_y: None
+    height: Window.height/15
+    canvas.before:
+        Color:
+            rgba: SECONDARY
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [10,]
+    color: TEXT
+    font_name: "Regular"
+    font_size: Window.height/35
+    text_size: self.size
+    halign: 'center'
+    valign: 'middle'
+        
+        

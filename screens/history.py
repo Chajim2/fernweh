@@ -14,9 +14,12 @@ class HistoryConstructor(BoxLayout):
         super().__init__(**kwargs)
         self.db = DiaryDatabase()
         
-    def on_kv_post(self, base_widget):
-        Clock.schedule_once(self.load_entries, 0)
+    #def on_kv_post(self, base_widget):
+     #   Clock.schedule_once(self.load_entries, 0)
     
+    def on_enter(self, *args):
+        self.load_entries()
+
     def load_entries(self, *args):
         entries = self.db.get_all_entries()
         entries_text = ""

@@ -5,6 +5,7 @@ build/
 dist/
 
 diary_entries.db
+diary_entries_backup.db
 
 
 __pycache__/

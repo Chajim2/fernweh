@@ -1,7 +1,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.uix.boxlayout import BoxLayout
 from kivy.lang import Builder
-from utils.loading import load_colors, resource_path
+from utils.loading import load_colors, resource_path, UserState
 
 PRIMARY, SECONDARY, ACCENT, TEXT = load_colors()
 
@@ -20,6 +20,11 @@ class HomeConstructor(BoxLayout):
 
     def go_to_profile(self):
         self.parent.manager.current = 'profile'
+
+    def logout(self):
+        UserState.set_state("Logged Out")
+        UserState.set_user_id(None)
+        self.parent.manager.current = 'login'
 
 class HomeScreen(Screen):
     def __init__(self, **kwargs):

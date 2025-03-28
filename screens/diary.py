@@ -1,7 +1,7 @@
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.core.window import Window
-from kivy.uix.screenmanager import Screen, ScreenManager
+from kivy.uix.screenmanager import Screen
 from utils.loading import load_fonts
 from utils.ai import get_emotions
 from kivy.clock import Clock
@@ -80,20 +80,16 @@ class DiaryConstructor(BoxLayout):
         self.add_widget(confirm_button)
 
     def go_to_confirmation(self, instance):
-        # Walk up the widget tree until we find the ScreenManager
-        parent = self.parent
-        while parent and not isinstance(parent, ScreenManager):
-            parent = parent.parent
-        
-        if parent:
-            # Now we have the ScreenManager
-            screen_manager = parent
-            confirmation_screen = screen_manager.get_screen('confirm')
-            confirmation_screen.display_summary(
-                self.ids.diary_input.text, 
-                self.chosen
-            )
-            screen_manager.current = 'confirm'
+        screen_manager = self.parent.manager
+        confirmation_screen = screen_manager.get_screen('confirm')
+        confirmation_screen.display_summary(
+            self.ids.diary_input.text, 
+            self.chosen
+        )
+        screen_manager.current = 'confirm'
+    
+    def go_to_home(self):
+        self.parent.manager.current = 'home'
 
 class DiaryScreen(Screen):
     def __init__(self, **kwargs):

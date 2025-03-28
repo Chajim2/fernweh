@@ -14,6 +14,36 @@
             size: self.size
 
     orientation:"vertical"
+    
+    # Add home button section
+    BoxLayout:
+        size_hint_y: 0.1
+        spacing: Window.width/40
+        padding: [Window.width/60, 0, 0, 0]
+        
+        Button:
+            text: "home"
+            size_hint_x: 0.2
+            background_color: 0, 0, 0, 0 
+            canvas.before:
+                Color:
+                    rgba: PRIMARY
+                Rectangle: 
+                    pos: self.pos
+                    size: self.size
+                Color:
+                    rgba: ACCENT
+                Line:
+                    width: 2  
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
+            font_name: "Bold"
+            font_size: Window.height/35
+            color: TEXT
+            on_press: root.go_to_home()
+        
+        Widget:
+            size_hint_x: 0.8
+
     Label:
         text: "your topic"
         font_size: Window.height/28
@@ -23,7 +53,6 @@
         text_size: self.size
         halign: 'left'
         padding: [Window.width/60, 0, 0,0]
-
 
     TextInput:
         id: diary_input
