@@ -21,20 +21,22 @@ class HistoryConstructor(BoxLayout):
         self.load_entries()
 
     def load_entries(self, *args):
-        entries = self.db.get_all_entries()
+        friends = self.db.get_friends()
         entries_text = ""
-        
-        for entry in entries:
-            timestamp = datetime.strptime(entry['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
-            formatted_date = timestamp.strftime('%B %d, %Y - %I:%M %p')
-            
-            entries_text += f"\n[b]{formatted_date}[/b]\n"
-            entries_text += f"{entry['text']}\n"
-            entries_text += f"Emotions: {', '.join(entry['emotions'])}\n"
-            entries_text += "\n" + "-"*50 + "\n"  # Separator line
-            
-        if hasattr(self.ids, 'entries_label'):
-            self.ids.entries_label.text = entries_text
+        for friend in friends:
+            entries = self.db.get_all_entries(id = friend['id'])
+            print("FRIEND", friend, entries)
+            for entry in entries:
+                timestamp = datetime.strptime(entry['timestamp'], '%Y-%m-%d %H:%M:%S.%f')
+                formatted_date = timestamp.strftime('%B %d, %Y - %I:%M %p')
+                entries_text += f"\n[b]{friend['username']}[/b]"
+                entries_text += f"\n{formatted_date}\n"
+                entries_text += f"{entry['text']}\n"
+                entries_text += f"Emotions: {', '.join(entry['emotions'])}\n"
+                entries_text += "\n" + "-"*50 + "\n"  # Separator line
+                
+            if hasattr(self.ids, 'entries_label'):
+                self.ids.entries_label.text = entries_text
     
     def go_home(self):
         self.parent.manager.current = 'home'

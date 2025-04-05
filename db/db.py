@@ -9,6 +9,15 @@ URL = "https://chajim.pythonanywhere.com/"
 class DiaryDatabase:
     def __init__(self):
         pass
+    
+    def get_emotions(self, text):
+        response = requests.post(URL + "get_emotions", json={"text" : text})
+        if response.status_code > 205:
+            print("UNUSUAL BEHAVIOR HERE ", response.json()['message'])
+        emotions = []
+        for line in response.json()['emotions']:
+            emotions.extend([[line['emotion'], line['description']]])
+        return emotions
 
     def send_friend_request(self, friend_name):
         response = requests.post(URL + "send_friend_request", json={"id" : UserState.get_user_id(), 'friend_name' : friend_name})
@@ -34,8 +43,8 @@ class DiaryDatabase:
         if response.status_code > 205:
             print("UNUSUAL BEHAVIOR HERE ", response.json()['message'])
 
-    def get_all_entries(self):
-        response = requests.post(URL + "get_all_entries", json = {"id" : UserState.get_user_id()})
+    def get_all_entries(self, id = UserState.get_user_id()):
+        response = requests.post(URL + "get_all_entries", json = {"id" : id})
         if response.status_code > 205:
             print("UNUSUAL BEHAVIOR HERE ", response.json()['message'])
         return response.json()['entries']

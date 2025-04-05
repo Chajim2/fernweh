@@ -3,11 +3,12 @@ from kivy.uix.button import Button
 from kivy.core.window import Window
 from kivy.uix.screenmanager import Screen
 from utils.loading import load_fonts
-from utils.ai import get_emotions
+#from utils.ai import get_emotions
 from kivy.clock import Clock
 from utils.loading import load_colors
 from kivy.lang import Builder
 from utils.loading import resource_path
+from db.db import DiaryDatabase
 
 PRIMARY, SECONDARY, ACCENT, TEXT = load_colors()
 
@@ -18,6 +19,7 @@ class DiaryConstructor(BoxLayout):
         load_fonts()
         Clock.schedule_once(lambda dt: self.on_window_resize(None, *Window.size))
         self.chosen = []
+        self.db = DiaryDatabase()
         self.emotion_buttons = {}
 
     def on_window_resize(self, instance, width, height):
@@ -42,7 +44,7 @@ class DiaryConstructor(BoxLayout):
         
 
     def submit_text(self, diary_input):
-        emotions = get_emotions(diary_input)
+        emotions = self.db.get_emotions(diary_input)
         self.ids.placeholder.size_hint_y = 0.03
         self.remove_widget(self.ids.button)
         self.ids.labels_container.clear_widgets()
