@@ -47,6 +47,7 @@ class DiaryDatabase:
         response = requests.post(URL + "get_all_entries", json = {"id" : id})
         if response.status_code > 205:
             print("UNUSUAL BEHAVIOR HERE ", response.json()['message'])
+        print("for the user ", id , " entries are: ", response.json()['entries'])
         return response.json()['entries']
     
     def accept_friend_request(self, friend_name):

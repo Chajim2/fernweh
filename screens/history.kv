@@ -3,12 +3,17 @@
 #:import SECONDARY utils.loading.SECONDARY
 #:import ACCENT utils.loading.ACCENT
 #:import TEXT utils.loading.TEXT
+#:import dp kivy.metrics.dp 
+
+<PostPanel>: # Add this if you want to style PostPanel via KV
+    # Example: Set default panel_color here if desired
+    # panel_color: 1, 1, 1, 0.1
 
 <HistoryConstructor>:
     orientation: 'vertical'
-    padding: 20
-    spacing: 10
-    
+    padding: dp(20) # Use dp consistently
+    spacing: dp(10)
+
     canvas.before:
         Color:
             rgba: PRIMARY
@@ -18,46 +23,45 @@
 
     BoxLayout:
         orientation: 'vertical'
-        padding: 20
-        spacing: 15
-        canvas.before:
-            Color:
-                rgba: PRIMARY
-            RoundedRectangle:
-                pos: self.pos
-                size: self.size
-                radius: [15, 15, 15, 15]
+        padding: dp(20)
+        spacing: dp(15)
+        # Removed canvas here as the parent already has PRIMARY bg
 
         Label:
             text: 'your past entries'
-            size_hint_y: 0.1
+            size_hint_y: None # Fix height instead of relying on size_hint
+            height: dp(40) # Example fixed height
             font_name: 'Bold'
-            font_size: self.height * 0.5
+            # font_size: self.height * 0.5 # font_size based on fixed height is better
+            font_size: dp(20) # Example fixed font size
             color: TEXT
 
         ScrollView:
-            size_hint_y: 0.8
+            id: main_scroll
+            size_hint_y: 0.8 # Keep this relative size
             do_scroll_x: False
-            
-            Label:
-                id: entries_label
+            bar_width: dp(10) # Optional: make scrollbar visible
+
+            BoxLayout:
+                id: entries_container
+                orientation: "vertical"
+                spacing: dp(10)
+                padding: dp(10)
                 size_hint_y: None
-                height: self.texture_size[1]
-                text_size: self.width, None
-                padding: 10, 10
-                color: TEXT
-                markup: True  # Enable markup for bold text
-                halign: 'left'
-                valign: 'top'
-                font_name: "Regular"
+                height: self.minimum_height
+                # No specific alignment needed here, children control their pos_hint
 
         Button:
             text: 'back to home'
-            size_hint_y: 0.1
+            size_hint_y: None # Fix height
+            height: dp(50) # Example fixed height
             background_color: ACCENT
             color: TEXT
             font_name: "Regular"
+            font_size: dp(16) # Example fixed font size
             on_press: root.go_home()
 
 <HistoryScreen>:
-    HistoryConstructor: 
+    name: 'history' # Good practice to name screens
+    HistoryConstructor:
+        id: history_constructor # Give it an id if needed

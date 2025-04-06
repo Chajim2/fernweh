@@ -1,0 +1,9 @@
+
+make the posts clickable
+Bugs in history screen: only using one of the entries even though 
+endopint sends all of them (except for the user's own)
+
+Create A screen for a poslat
+    Let users comment on a post
+    Let the user see the comments on his posts
+    
