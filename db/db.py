@@ -19,6 +19,19 @@ class DiaryDatabase:
             emotions.extend([[line['emotion'], line['description']]])
         return emotions
 
+    def post_comment(self, post_id, text):
+        response = requests.post(URL + "post_comment", json={"text": text, "post_id": post_id, "user_id": UserState.get_user_id()})
+        if response.status_code > 205:
+            print("UNUSUAL BEHAVIOR HERE ", response.json()['message'])
+        return response.status_code == 200, response.json()['message']
+    
+    def get_comments(self, post_id):
+        response = requests.post(URL + "get_comments", json={"entry_id": post_id, "user_id": UserState.get_user_id()})
+        if response.status_code > 205:
+            print("UNUSUAL BEHAVIOR HERE ", response.json()['message'])
+        print("KOMENTARE JSOU: " ,response.json())
+        return response.json()['comments']
+    
     def send_friend_request(self, friend_name):
         response = requests.post(URL + "send_friend_request", json={"id" : UserState.get_user_id(), 'friend_name' : friend_name})
         if response.status_code > 205:
@@ -47,7 +60,6 @@ class DiaryDatabase:
         response = requests.post(URL + "get_all_entries", json = {"id" : id})
         if response.status_code > 205:
             print("UNUSUAL BEHAVIOR HERE ", response.json()['message'])
-        print("for the user ", id , " entries are: ", response.json()['entries'])
         return response.json()['entries']
     
     def accept_friend_request(self, friend_name):

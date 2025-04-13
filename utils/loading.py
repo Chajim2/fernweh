@@ -55,14 +55,14 @@ class UserState:
     def set_state(cls, state):
          cls.state = state
     @classmethod
-    def get_state(cls, state):
+    def get_state(cls):
          return cls.state
     @classmethod
     def set_user_id(cls, user_id):
-        cls.user_id = user_id  # Set the user ID
+        cls.user_id = user_id 
 
     @classmethod
     def get_user_id(cls):
-        return cls.user_id  # Get the user ID
+        return cls.user_id 
     
     
