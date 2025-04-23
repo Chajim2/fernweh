@@ -43,6 +43,18 @@ class PostPanel(ButtonBehavior, BoxLayout):
         self.canvas.before.add(self.bg_rect)
         self.bind(pos=self._update_bg_rect, size=self._update_bg_rect)
 
+        # Emotions at the top
+        emotions_label = Label(
+            text=f"Emotions: {', '.join(emotions)}",
+            color=TEXT,
+            size_hint_y=None,
+            halign='left',
+            valign='top',
+            font_name="Bold"
+        )
+        emotions_label.bind(texture_size=lambda instance, value: setattr(instance, 'height', value[1]))
+        self.add_widget(emotions_label)
+
         username_label = Label(
             text=f'{username} - {timestamp}',
             color=TEXT,
@@ -53,8 +65,14 @@ class PostPanel(ButtonBehavior, BoxLayout):
         username_label.bind(texture_size=lambda instance, value: setattr(instance, 'height', value[1]))
         self.add_widget(username_label)
 
+        # Show only first 70 words
+        words = text.split()
+        preview_text = ' '.join(words[:70])
+        if len(words) > 70:
+            preview_text += '...'
+
         text_label = Label(
-            text=text,
+            text=preview_text,
             color=TEXT,
             size_hint_y=None,
             halign='left',
@@ -62,19 +80,6 @@ class PostPanel(ButtonBehavior, BoxLayout):
         )
         text_label.bind(texture_size=lambda instance, value: setattr(instance, 'height', value[1]))
         self.add_widget(text_label)
-
-        # Label 3: Emotions
-        emotions_label = Label(
-            text=f"Emotions: {', '.join(emotions)}",
-            color=TEXT,
-            size_hint_y=None,
-            # text_size is set below and updated in _update_label_text_size
-            halign='left',
-            valign='top'
-        )
-        # Bind AFTER creation
-        emotions_label.bind(texture_size=lambda instance, value: setattr(instance, 'height', value[1]))
-        self.add_widget(emotions_label)
 
         # Initial text_size update needs a small delay
         Clock.schedule_once(self._update_label_text_size, 0.05)
@@ -107,7 +112,7 @@ class HistoryConstructor(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.db = DiaryDatabase()
-        Clock.schedule_once(self.load_entries)
+        #Clock.schedule_once(self.load_entries)
 
     def load_entries(self, *args):
         if not self.ids or 'entries_container' not in self.ids:

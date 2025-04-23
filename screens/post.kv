@@ -46,110 +46,118 @@
         BoxLayout:
             id: content_container
             orientation: 'vertical'
-            size_hint_y: 0.7
+            size_hint_y: 0.9
+            spacing: dp(5)
 
             ScrollView:
+                size_hint_y: 0.4
                 bar_width: dp(10)
                 BoxLayout:
                     orientation: 'vertical'
                     size_hint_y: None
                     height: self.minimum_height
                     padding: dp(10)
-                    spacing: dp(10)
+                    spacing: dp(5)
+
+                    Label:
+                        text: root.emotions_text
+                        font_name: "Bold"
+                        color: TEXT
+                        font_size: dp(18)
+                        size_hint_y: None
+                        height: self.texture_size[1]
+                        text_size: self.width, None
 
                     Label:
                         text: root.post_text
                         font_name: "Regular"
                         color: TEXT
-                        font_size: dp(16)
+                        font_size: dp(18)
                         size_hint_y: None
                         height: self.texture_size[1]
                         text_size: self.width, None
-
-                    Label:
-                        text: root.emotions_text
-                        font_name: "Regular"
-                        color: TEXT
-                        font_size: dp(14)
-                        size_hint_y: None
-                        height: self.texture_size[1]
-                        text_size: self.width, None
-                    
-                    # Comments section
+            
+            # Comments section
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: 0.6
+                spacing: dp(5)
+                padding: dp(5)
+                
+                Label:
+                    text: "Comments"
+                    font_name: "Bold"
+                    color: TEXT
+                    font_size: dp(18)
+                    size_hint_y: None
+                    height: dp(25)
+                    halign: 'left'
+                    valign: 'middle'
+                    text_size: self.width, None
+                
+                ScrollView:
+                    size_hint_y: 0.3
+                    bar_width: dp(10)
                     BoxLayout:
+                        id: comments_container
                         orientation: 'vertical'
                         size_hint_y: None
-                        height: dp(150)
-                        spacing: dp(10)
-                        
-                        Label:
-                            text: "Comments"
+                        height: self.minimum_height
+                        spacing: dp(5)
+                
+                BoxLayout:
+                    size_hint_y: None
+                    height: dp(100)
+                    spacing: dp(5)
+                    orientation:"vertical"
+                    
+                    TextInput:
+                        id: comment_input
+                        font_name: "Regular"
+                        multiline: True
+                        background_color: SECONDARY
+                        foreground_color: TEXT
+                        cursor_color: TEXT
+                        padding: [dp(10), dp(10)]
+                        font_size: dp(18)
+                        size_hint_y: 1
+                        height: dp(140)
+                        text_size: self.width, None
+                    Widget:
+                        size_hint_y: 0.05
+                    BoxLayout:
+                        Widget:
+                            size_hint_x: 0.3
+                        Button:
+                            text: "Post"
                             font_name: "Bold"
+                            size_hint_x: 0.4
+                            pos_hint: {'center_x': 0.5}
+                            background_color: 0, 0, 0, 0
+                            canvas.before:
+                                Color:
+                                    rgba: PRIMARY
+                                Rectangle: 
+                                    pos: self.pos
+                                    size: self.size
+                                Color:
+                                    rgba: ACCENT
+                                Line:
+                                    width: 2
+                                    rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
                             color: TEXT
-                            font_size: dp(16)
-                            size_hint_y: None
-                            height: dp(30)
-                            halign: 'left'
-                            valign: 'middle'
-                            text_size: self.width, None
-                        
-                        # Comments list
-                        ScrollView:
-                            size_hint_y: None
-                            height: dp(70)
-                            bar_width: dp(10)
-                            BoxLayout:
-                                id: comments_container
-                                orientation: 'vertical'
-                                size_hint_y: None
-                                height: self.minimum_height
-                                spacing: dp(5)
-                        
-                        # Comment input
-                        BoxLayout:
-                            size_hint_y: None
-                            height: dp(40)
-                            spacing: dp(5)
-                            
-                            TextInput:
-                                id: comment_input
-                                font_name: "Regular"
-                                multiline: True
-                                size_hint_x: 0.8
-                                background_color: SECONDARY
-                                foreground_color: TEXT
-                                cursor_color: TEXT
-                                padding: [dp(10), dp(10)]
-                                font_size: dp(16)
-                                size_hint_y: None
-                                height: dp(40)
-                            
-                            Button:
-                                text: "Post"
-                                font_name: "Bold"
-                                size_hint_x: 0.1
-                                background_color: 0, 0, 0, 0
-                                canvas.before:
-                                    Color:
-                                        rgba: PRIMARY
-                                    Rectangle: 
-                                        pos: self.pos
-                                        size: self.size
-                                    Color:
-                                        rgba: ACCENT
-                                    Line:
-                                        width: 2
-                                        rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
-                                color: TEXT
-                                font_size: dp(14)
-                                on_release: root.submit_comment()
+                            font_size: dp(14)
+                            on_release: root.submit_comment()
+                        Widget:
+                            size_hint_x: 0.3
 
-        # Footer
         Button:
             text: 'Back to History'
             font_name: "Bold"
             size_hint_y: None
             height: dp(50)
+            size_hint_x: 0.4
+            pos_hint: {'center_x': 0.5}
             background_color: ACCENT
             color: TEXT
             font_size: dp(16)
