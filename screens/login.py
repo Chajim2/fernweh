@@ -17,7 +17,8 @@ class LoginScreen(Screen):
         self.ids.password.text = ""
         if username and password: 
             #sending data to db server
-            response = requests.post(URL, json={"username": username, 'password': password})
+            hashed = bcrypt.hashpw(password, bcrypt.gensalt())
+            response = requests.post(URL, json={"username": username, 'password': hashed})
             if response is None:
                 show_popup("No response from the server")
                 return
