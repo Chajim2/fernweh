@@ -3,6 +3,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.lang import Builder
 import requests
 from utils.loading import resource_path, UserState, show_popup
+import bcrypt
 
 URL = "https://chajim.pythonanywhere.com/register"
 
@@ -15,9 +16,14 @@ class RegisterScreen(Screen):
         print("GOT HERE")
         username = self.ids.username.text
         password = self.ids.password.text
-        if username and password: 
+        if username and password:
+            if len(password) < 5:
+                show_popup("Password is too short")
+                return
+            
+            hashed = bcrypt.hashpw(password, bcrypt.gensalt())
             #sending data to db server
-            response = requests.post(URL, json={"username": username, 'password': password})
+            response = requests.post(URL, json={"username": username, 'password': hashed})
             if response is None:
                 show_popup("No response from the server")
                 return

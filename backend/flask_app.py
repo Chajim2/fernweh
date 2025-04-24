@@ -59,8 +59,6 @@ def register():
         username, password = data['username'], data['password']
         if db.username_taken(username):
             return jsonify({"message": "Username taken"}), 409
-        elif len(password) < 5:
-            return jsonify({"message": "Password too short"}), 400
         else:
             db.add_user(username, password)
             return jsonify({"message": "User added successfully"}), 201
