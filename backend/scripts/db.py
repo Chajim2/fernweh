@@ -1,10 +1,33 @@
 import sqlite3
 from datetime import datetime
+from argon2 import PasswordHasher
 
 class DiaryDatabase:
+
+    ph = PasswordHasher()
+
     def __init__(self):
         self.conn = sqlite3.connect('database.db', check_same_thread=False)
         self.create_tables()
+
+    def correct_password(self, username, password):
+        try:
+            cursor.execute('''
+                SELECT password FROM users
+                WHERE username = ?
+            ''', (username,))
+            result = cursor.fetchall()
+
+            if result:
+                try:
+                    ph.verify(result[0], password)
+                    return True
+
+            return False
+
+        except Exception as e:
+            print(f"Database error: {e}")
+            return False
 
     def find_user_id(self, username):
         cursor = self.conn.cursor()
@@ -18,12 +41,15 @@ class DiaryDatabase:
 
     def check_login(self, username, password):
         cursor = self.conn.cursor()
+
+        if not correct_password(username, password):
+            return []
+
         try:
             cursor.execute('''
                 SELECT id FROM users
                 WHERE username = ?
-                AND password = ?
-            ''', (username, password))
+            ''', (username,))
             return cursor.fetchall()
 
         except Exception as e:
@@ -217,11 +243,14 @@ class DiaryDatabase:
 
     def add_user(self, username, password):
         cursor = self.conn.cursor()
+
+        hashed = ph.hash(password)
+
         cursor.execute('''
             INSERT INTO users(username, password)
             VALUES
                 (?, ?)
-        ''', (username, password))
+        ''', (username, hashed))
         self.conn.commit()
 
     def remove_friend_request(self, user_id, friend_id):
