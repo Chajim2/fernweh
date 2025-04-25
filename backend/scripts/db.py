@@ -4,13 +4,13 @@ from argon2 import PasswordHasher
 
 class DiaryDatabase:
 
-    ph = PasswordHasher()
-
     def __init__(self):
         self.conn = sqlite3.connect('database.db', check_same_thread=False)
         self.create_tables()
+        self.ph = PasswordHasher()
 
     def correct_password(self, username, password):
+        cursor = self.conn.cursor()
         try:
             cursor.execute('''
                 SELECT password FROM users
@@ -20,9 +20,11 @@ class DiaryDatabase:
 
             if result:
                 try:
-                    ph.verify(result[0], password)
+                    self.ph.verify(result[0][0], password)
                     return True
-
+                except:
+                    return False
+                
             return False
 
         except Exception as e:
@@ -42,7 +44,7 @@ class DiaryDatabase:
     def check_login(self, username, password):
         cursor = self.conn.cursor()
 
-        if not correct_password(username, password):
+        if not self.correct_password(username, password):
             return []
 
         try:
@@ -244,7 +246,7 @@ class DiaryDatabase:
     def add_user(self, username, password):
         cursor = self.conn.cursor()
 
-        hashed = ph.hash(password)
+        hashed = self.ph.hash(password)
 
         cursor.execute('''
             INSERT INTO users(username, password)
