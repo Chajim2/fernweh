@@ -6,11 +6,11 @@ import google.generativeai as genai
 class LLMCaller:
     def __init__(self):
         MODEL = "gemini-1.5-flash"
-        self.api_key = "AIzaSyC6B0RPHiL4ene56eqSPLsr8EwrkNgUKfo"
+        self.api_key = "SECRET_KEY"
         genai.configure(api_key= self.api_key)
         self.model = genai.GenerativeModel(MODEL)
 
-        AUTH_KEY = "b72efb14-f1f3-49a4-a213-2f1a6044483b:fx"
+        AUTH_KEY = "SECRET_KEY"
 
         self.translator = deepl.Translator(AUTH_KEY)
 
