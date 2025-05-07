@@ -19,10 +19,8 @@
     BoxLayout:
         size_hint_y: 0.1
         orientation: 'horizontal'
+        spacing: 10
         
-        Widget:
-            size_hint_x: 0.8
-            
         Button:
             text: 'logout'
             size_hint: (0.2, 0.8)
@@ -44,6 +42,31 @@
             color: TEXT
             font_name: "Regular"
             on_press: root.logout()
+            
+        Widget:
+            size_hint_x: 0.6
+            
+        Button:
+            text: 'profile'
+            size_hint: (0.2, 0.8)
+            pos_hint: {'center_y': 0.5}
+            background_color: 0, 0, 0, 0
+            canvas.before:
+                Color:
+                    rgba: PRIMARY
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [15, 15, 15, 15]
+                Color:
+                    rgba: ACCENT
+                Line:
+                    width: 2
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, 15, 15)
+            font_size: self.height * 0.4
+            color: TEXT
+            font_name: "Regular"
+            on_press: root.go_to_profile()
 
     BoxLayout:
         orientation: 'vertical'
@@ -90,7 +113,7 @@
         Widget:
             size_hint_y: 0.01
         Button:
-            text: 'view past entries'
+            text: 'view entries'
             size_hint_y: 0.1
             size_hint_x: 0.6
             pos_hint: {'center_x': 0.5}
@@ -111,30 +134,6 @@
             color: TEXT
             font_name: "Regular"
             on_press: root.go_to_history()
-        Widget:
-            size_hint_y: 0.01
-        Button:
-            text: 'profile'
-            size_hint_y: 0.1
-            size_hint_x: 0.6
-            pos_hint: {'center_x': 0.5}
-            background_color: 0, 0, 0, 0
-            canvas.before:
-                Color:
-                    rgba: PRIMARY
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                    radius: [15, 15, 15, 15]
-                Color:
-                    rgba: ACCENT
-                Line:
-                    width: 2
-                    rounded_rectangle: (self.x, self.y, self.width, self.height, 15, 15)
-            font_size: self.height * 0.15
-            color: TEXT
-            font_name: "Regular"
-            on_press: root.go_to_profile()
 
 <HomeScreen>:
     HomeConstructor: 

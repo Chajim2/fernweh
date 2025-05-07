@@ -13,13 +13,13 @@
             pos: self.pos
             size: self.size
 
-    orientation:"vertical"
+    orientation: "vertical"
     
-    # Add home button section
+    # Top navigation bar
     BoxLayout:
         size_hint_y: 0.1
-        spacing: Window.width/40
-        padding: [Window.width/60, 0, 0, 0]
+        spacing: dp(10)
+        padding: [dp(10), 0, dp(10), 0]
         
         Button:
             text: "home"
@@ -37,7 +37,7 @@
                     width: 2  
                     rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
             font_name: "Bold"
-            font_size: Window.height/35
+            font_size: sp(20)
             color: TEXT
             on_press: root.go_to_home()
         
@@ -46,25 +46,29 @@
 
     Label:
         text: "your topic"
-        font_size: Window.height/28
-        size_hint_y : 0.08
+        font_size: sp(24)
+        size_hint_y: 0.08
         font_name: "Regular"
         color: TEXT
         text_size: self.size
         halign: 'left'
-        padding: [Window.width/60, 0, 0,0]
+        padding: [dp(10), 0, 0, 0]
 
-    TextInput:
-        id: diary_input
-        minimum_width : 600
-        hint_text: "enter your text here"
-        font_name: "Regular"
-        font_size: Window.height/35
-        padding: Window.width/60
+    ScrollView:  # Added ScrollView for better mobile handling
         size_hint_y: 0.5
-        multiline: True
-        background_color: SECONDARY
-        foreground_color: TEXT
+        do_scroll_x: False  # Disable horizontal scrolling
+        
+        TextInput:
+            id: diary_input
+            size_hint_y: None
+            height: max(self.minimum_height, Window.height * 0.4)  # Dynamic height
+            hint_text: "enter your text here"
+            font_name: "Regular"
+            font_size: sp(18)
+            padding: dp(10)
+            multiline: True
+            background_color: SECONDARY
+            foreground_color: TEXT
 
     Widget:
         id: text_button_seperator
@@ -85,12 +89,12 @@
                 width: 2  
                 rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
         font_name: "Bold"
-        font_size: Window.height/30
+        font_size: sp(20)
         color: TEXT
         text: "nekam to poslat"
         size_hint_y: 0.08
-        pos_hint: {"center_x" : 0.5}
-        size_hint_x: 0.6
+        pos_hint: {"center_x": 0.5}
+        size_hint_x: 0.8  # Increased width for better mobile visibility
         on_press: root.submit_text(diary_input.text)
 
     Widget:
@@ -101,8 +105,8 @@
         id: labels_container
         size_hint_y: 0.01
         orientation: 'vertical'
-        spacing: 0  # Reduces space between labels
-        padding: 0  # Removes padding around the container
+        spacing: 0
+        padding: 0
     
 <DiaryScreen>:
     DiaryConstructor:

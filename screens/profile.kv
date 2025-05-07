@@ -28,12 +28,11 @@
         padding: [Window.width/20, Window.height/20]
         spacing: Window.height/40
 
-        # Home button at top
+        # Top navigation bar
         BoxLayout:
             size_hint_y: 0.1
             spacing: Window.width/40
-            Widget:
-                size_hint_x: 0.8
+            
             Button:
                 text: "home"
                 size_hint_x: 0.2
@@ -54,7 +53,8 @@
                 color: TEXT
                 on_press: root.go_to_home()
             
-            
+            Widget:
+                size_hint_x: 0.8
 
         # Friend request input area
         BoxLayout:

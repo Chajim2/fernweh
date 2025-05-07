@@ -128,17 +128,13 @@ class PostScreen(Screen):
             comments_container.add_widget(comment_label)
 
     def submit_comment(self):
-        """Submits a new comment and refreshes the list."""
         comment_text = self.ids.comment_input.text.strip()
         if not comment_text:
-            print("Comment text is empty.")
             return
         if not self.id:
-             print("Post ID missing, cannot submit comment.")
              return
 
         try:
-            # Assuming post_comment returns (success_bool, message_str)
             success, message = db.post_comment(self.id, comment_text)
             print(f"Post comment result: {success}, {message}") # Debugging
             if success:

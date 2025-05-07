@@ -5,9 +5,7 @@
 #:import TEXT utils.loading.TEXT
 #:import dp kivy.metrics.dp 
 
-<PostPanel>: # Add this if you want to style PostPanel via KV
-    # Example: Set default panel_color here if desired
-    # panel_color: 1, 1, 1, 0.1
+<PostPanel>: 
 
 <HistoryConstructor>:
     orientation: 'vertical'
@@ -20,6 +18,33 @@
         Rectangle:
             pos: self.pos
             size: self.size
+
+    BoxLayout:
+        size_hint_y: 0.1
+        spacing: Window.width/40
+        
+        Button:
+            text: "home"
+            size_hint_x: 0.2
+            background_color: 0, 0, 0, 0 
+            canvas.before:
+                Color:
+                    rgba: PRIMARY
+                Rectangle: 
+                    pos: self.pos
+                    size: self.size
+                Color:
+                    rgba: ACCENT
+                Line:
+                    width: 2  
+                    rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
+            font_name: "Bold"
+            font_size: Window.height/35
+            color: TEXT
+            on_press: root.go_home()
+        
+        Widget:
+            size_hint_x: 0.8
 
     BoxLayout:
         orientation: 'vertical'
