@@ -2,7 +2,9 @@ from flask import Flask, request, jsonify
 from scripts.db import DiaryDatabase
 from scripts.ai import LLMCaller
 import logging
-
+import jwt
+from jwt import InvalidTokenError
+from functools import wraps
 
 # Configure logging
 logging.basicConfig(
@@ -16,14 +18,44 @@ db = DiaryDatabase()
 
 llmcaller = LLMCaller()
 
+SECRET_KEY = 'secret-key'
+ALGORITHM = 'HS256'
+
+def require_jwt(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        data = request.get_json()
+
+        if not data or 'id' not in data:
+            return jsonify({'error': 'JWT is missing in request body'}), 401
+        
+        token = data['id']
+        print(token)
+
+        try:
+            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+            return f(*args, **kwargs, id=payload['id'], data=data)
+        
+        except InvalidTokenError:
+            return jsonify({'error': 'Invalid token'}), 401
+    
+    return decorated_function
+
+def create_jwt(payload_data):
+    payload = payload_data.copy()
+
+    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+    return token
+
 @app.route('/')
 def hello_world():
     return "Nun to see here friend"
 
 @app.route('/get_emotions', methods = ["POST"])
-def get_emotions():
+@require_jwt
+def get_emotions(id, data):
     if request.method == "POST":
-        data = request.get_json()
         if data is None:
             return jsonify({"message": "Invalid JSON"}), 400
 
@@ -47,7 +79,8 @@ def login():
         if len(users_found) == 0:
             return jsonify({"message": "User not found"}), 404
         else:
-            return jsonify({"message" : "Successfull login", "id" : users_found[0][0]}), 200
+            token = create_jwt({'id': users_found[0][0]})
+            return jsonify({"message" : "Successfull login", "id" : token}), 200
 
 @app.route('/register', methods = ['POST'])
 def register():
@@ -64,13 +97,13 @@ def register():
             return jsonify({"message": "User added successfully"}), 201
 
 @app.route('/add_friend', methods = ['POST'])
-def add_friend():
+@require_jwt
+def add_friend(id, data):
     if request.method == "POST":
-        data = request.get_json()
         if data is None:
             return jsonify({"message" : "Invalid JSON"}), 400
 
-        result = db.add_friend(data['friend_name'], data['id'])
+        result = db.add_friend(data['friend_name'], id)
 
         if result == 0:
             return jsonify({"message" : "Friend not found"}), 404
@@ -81,73 +114,73 @@ def add_friend():
         return jsonify({'message' : "Friend added successfully"}), 201
 
 @app.route('/save_entry', methods = ['POST'])
-def save_entry():
+@require_jwt
+def save_entry(id, data):
     if request.method == "POST":
-        data = request.get_json()
         if data is None:
             return jsonify({"message" : "No data sent"}), 400
 
-        if db.save_entry(data['text'], data['emotions'], data['id']):
+        if db.save_entry(data['text'], data['emotions'], id):
             return jsonify({"message": "Entry saved"}), 201
         else:
             return jsonify({"message": "Error while trying to save entry"}), 400
 
 @app.route ('/get_all_entries', methods = ["POST"])
-def get_all_entries():
+@require_jwt
+def get_all_entries(id, data):
     if request.method == "POST":
-        data = request.get_json()
         if data is None:
             return jsonify({"message" : "No data sent"}), 400
-        results = db.get_all_entries(data['id'])
+        results = db.get_all_entries(id)
         return jsonify({"message" : "Entries retrieved succesfully", "entries" : results}), 200
 
 @app.route('/get_friends', methods = ["POST"])
-def get_friends():
+@require_jwt
+def get_friends(id, data):
     if request.method == "POST":
-        data = request.get_json()
         if data is None:
             return jsonify({"message" : "No data sent"}), 400
-        result = db.get_friends(data['id'])
+        result = db.get_friends(id)
         return jsonify({"message" : "Friends retrieved", 'friends' : result}), 200
 
 @app.route('/send_friend_request', methods = ["POST"])
-def send_friend_request():
+@require_jwt
+def send_friend_request(id, data):
     if request.method == "POST":
-        data = request.get_json()
         if data is None:
             return jsonify({"message" : "No data sent"}), 400
-        result = db.send_friend_request(data['id'], data['friend_name'])
+        result = db.send_friend_request(id, data['friend_name'])
 
         if result:
             return jsonify({"message" : "Request sent"}), 200
         return jsonify({"message" : "Username not found"}), 404
 
 @app.route('/get_requests', methods = ['POST'])
-def get_requests():
+@require_jwt
+def get_requests(id, data):
     if request.method == "POST":
-        data = request.get_json()
         if data is None:
             return jsonify({"message" : "No data sent"}), 400
-        results = db.get_requests(data['id'])
+        results = db.get_requests(id)
         return jsonify({"message" : "Returning user friend requests", 'requests' :  results}), 200
 
 @app.route('/decline_friend_request', methods = ['POST'])
-def decline_friend_request():
+@require_jwt
+def decline_friend_request(id, data):
     if request.method == "POST":
-        data = request.get_json()
         if data is None:
             return jsonify({"message" : "No data sent"}), 400
-        if db.decline_friend_request(data['id'], data['friend_name']):
+        if db.decline_friend_request(id, data['friend_name']):
             return jsonify({"message" : "Friend request declined"}), 200
         return jsonify({"message" : "Error in db while declining request"}), 400
 
 @app.route('/accept_friend_request', methods = ['POST'])
-def accept_friend_request():
+@require_jwt
+def accept_friend_request(id, data):
     if request.method == "POST":
-        data = request.get_json()
         if data is None:
             return jsonify({"message" : "No data sent"}), 400
-        suc, a = db.accept_friend_request(data['id'], data['friend_name'])
+        suc, a = db.accept_friend_request(id, data['friend_name'])
         if suc:
             return jsonify({"message" : "Friend request accepted", "xd" : a}), 200
         return jsonify({"message" : "Error in db while accepting request"}), 400
