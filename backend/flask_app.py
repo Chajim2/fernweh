@@ -96,23 +96,6 @@ def register():
             db.add_user(username, password)
             return jsonify({"message": "User added successfully"}), 201
 
-@app.route('/add_friend', methods = ['POST'])
-@require_jwt
-def add_friend(id, data):
-    if request.method == "POST":
-        if data is None:
-            return jsonify({"message" : "Invalid JSON"}), 400
-
-        result = db.add_friend(data['friend_name'], id)
-
-        if result == 0:
-            return jsonify({"message" : "Friend not found"}), 404
-
-        if result == 1:
-            return jsonify({"message" : "Already friends"}), 409
-
-        return jsonify({'message' : "Friend added successfully"}), 201
-
 @app.route('/save_entry', methods = ['POST'])
 @require_jwt
 def save_entry(id, data):
@@ -180,7 +163,15 @@ def accept_friend_request(id, data):
     if request.method == "POST":
         if data is None:
             return jsonify({"message" : "No data sent"}), 400
+
+        friend_requests = db.get_requests(id)
+        friend_id = db.find_user_id(data['friend_name'])
+
+        if friend_id not in friend_requests:
+            return jsonify({"message" : "Friend request does not exist"}), 400
+
         suc, a = db.accept_friend_request(id, data['friend_name'])
+
         if suc:
             return jsonify({"message" : "Friend request accepted", "xd" : a}), 200
         return jsonify({"message" : "Error in db while accepting request"}), 400
