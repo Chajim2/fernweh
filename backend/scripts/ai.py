@@ -1,18 +1,27 @@
 import deepl
 from langdetect import detect
 import google.generativeai as genai
+from dotenv import load_dotenv
+import os
 
+# Load environment variables
+load_dotenv()
 
 class LLMCaller:
     def __init__(self):
         MODEL = "gemini-1.5-flash"
-        self.api_key = "SECRET_KEY"
-        genai.configure(api_key= self.api_key)
+        self.api_key = os.getenv('GEMINI_API_KEY')
+        if not self.api_key:
+            raise ValueError("GEMINI_API_KEY not found in environment variables")
+            
+        genai.configure(api_key=self.api_key)
         self.model = genai.GenerativeModel(MODEL)
 
-        AUTH_KEY = "SECRET_KEY"
-
-        self.translator = deepl.Translator(AUTH_KEY)
+        self.deepl_auth_key = os.getenv('DEEPL_API_KEY')
+        if not self.deepl_auth_key:
+            raise ValueError("DEEPL_API_KEY not found in environment variables")
+            
+        self.translator = deepl.Translator(self.deepl_auth_key)
 
 
     def translate_to_english(self, text):

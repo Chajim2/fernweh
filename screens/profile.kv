@@ -3,10 +3,23 @@
 #:import SECONDARY utils.loading.SECONDARY
 #:import ACCENT utils.loading.ACCENT
 #:import TEXT utils.loading.TEXT
+#:import dp kivy.metrics.dp
+#:import sp kivy.metrics.sp
 
-<RequestLabel>:
+<RequestLabel@StyledLabel>:
     size_hint_y: None
-    height: Window.height/15
+    height: dp(50)
+    canvas.before:
+        Color:
+            rgba: SECONDARY
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [10,]
+
+<FriendLabel@StyledLabel>:
+    size_hint_y: None
+    height: dp(50)
     canvas.before:
         Color:
             rgba: SECONDARY
@@ -25,32 +38,18 @@
 
     BoxLayout:
         orientation: "vertical"
-        padding: [Window.width/20, Window.height/20]
-        spacing: Window.height/40
+        padding: dp(20)
+        spacing: dp(15)
 
         # Top navigation bar
         BoxLayout:
             size_hint_y: 0.1
-            spacing: Window.width/40
+            spacing: dp(10)
             
-            Button:
-                text: "home"
+            StyledButton:
+                text: "Home"
                 size_hint_x: 0.2
-                background_color: 0, 0, 0, 0 
-                canvas.before:
-                    Color:
-                        rgba: PRIMARY
-                    Rectangle: 
-                        pos: self.pos
-                        size: self.size
-                    Color:
-                        rgba: ACCENT
-                    Line:
-                        width: 2  
-                        rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
-                font_name: "Bold"
-                font_size: Window.height/35
-                color: TEXT
+                font_size: sp(20)
                 on_press: root.go_to_home()
             
             Widget:
@@ -59,48 +58,26 @@
         # Friend request input area
         BoxLayout:
             size_hint_y: 0.15
-            spacing: Window.width/40
+            spacing: dp(10)
             
-            TextInput:
+            StyledTextInput:
                 id: friend_input
                 hint_text: "Enter friend's username"
-                font_name: "Regular"
-                font_size: Window.height/35
-                padding: [Window.width/60, 0]
-                background_color: SECONDARY
-                foreground_color: TEXT
-                multiline: False
+                font_size: sp(18)
                 size_hint_x: 0.7
             
-            Button:
+            StyledButton:
                 text: "Add Friend"
                 size_hint_x: 0.3
-                background_color: 0, 0, 0, 0 
-                canvas.before:
-                    Color:
-                        rgba: PRIMARY
-                    Rectangle: 
-                        pos: self.pos
-                        size: self.size
-                    Color:
-                        rgba: ACCENT
-                    Line:
-                        width: 2  
-                        rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
-                font_name: "Bold"
-                font_size: Window.height/35
-                color: TEXT
+                font_size: sp(18)
                 on_press: root.send_friend_request(friend_input.text)
 
         # Friends List Section
-        Label:
+        StyledLabel:
             text: "Friends List"
-            font_size: Window.height/25
+            font_size: sp(24)
             size_hint_y: 0.1
-            font_name: "Bold"
-            color: TEXT
             halign: 'left'
-            text_size: self.size
 
         ScrollView:
             size_hint_y: 0.3
@@ -109,17 +86,14 @@
                 orientation: 'vertical'
                 size_hint_y: None
                 height: self.minimum_height
-                spacing: Window.height/40
+                spacing: dp(10)
 
         # Friend Requests Section
-        Label:
+        StyledLabel:
             text: "Friend Requests"
-            font_size: Window.height/25
+            font_size: sp(24)
             size_hint_y: 0.1
-            font_name: "Bold"
-            color: TEXT
             halign: 'left'
-            text_size: self.size
 
         ScrollView:
             size_hint_y: 0.3
@@ -128,23 +102,6 @@
                 orientation: 'vertical'
                 size_hint_y: None
                 height: self.minimum_height
-                spacing: Window.height/40
-        
-<FriendLabel>:
-    size_hint_y: None
-    height: Window.height/15
-    canvas.before:
-        Color:
-            rgba: SECONDARY
-        RoundedRectangle:
-            pos: self.pos
-            size: self.size
-            radius: [10,]
-    color: TEXT
-    font_name: "Regular"
-    font_size: Window.height/35
-    text_size: self.size
-    halign: 'center'
-    valign: 'middle'
+                spacing: dp(10)
         
         

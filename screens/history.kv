@@ -3,13 +3,14 @@
 #:import SECONDARY utils.loading.SECONDARY
 #:import ACCENT utils.loading.ACCENT
 #:import TEXT utils.loading.TEXT
-#:import dp kivy.metrics.dp 
+#:import dp kivy.metrics.dp
+#:import sp kivy.metrics.sp
 
 <PostPanel>: 
 
 <HistoryConstructor>:
     orientation: 'vertical'
-    padding: dp(20) # Use dp consistently
+    padding: dp(20)
     spacing: dp(10)
 
     canvas.before:
@@ -21,26 +22,12 @@
 
     BoxLayout:
         size_hint_y: 0.1
-        spacing: Window.width/40
+        spacing: dp(10)
         
-        Button:
-            text: "home"
+        StyledButton:
+            text: "Home"
             size_hint_x: 0.2
-            background_color: 0, 0, 0, 0 
-            canvas.before:
-                Color:
-                    rgba: PRIMARY
-                Rectangle: 
-                    pos: self.pos
-                    size: self.size
-                Color:
-                    rgba: ACCENT
-                Line:
-                    width: 2  
-                    rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
-            font_name: "Bold"
-            font_size: Window.height/35
-            color: TEXT
+            font_size: sp(20)
             on_press: root.go_home()
         
         Widget:
@@ -50,22 +37,19 @@
         orientation: 'vertical'
         padding: dp(20)
         spacing: dp(15)
-        # Removed canvas here as the parent already has PRIMARY bg
 
-        Label:
-            text: 'your past entries'
-            size_hint_y: None # Fix height instead of relying on size_hint
-            height: dp(40) # Example fixed height
-            font_name: 'Bold'
-            # font_size: self.height * 0.5 # font_size based on fixed height is better
-            font_size: dp(20) # Example fixed font size
-            color: TEXT
+        StyledLabel:
+            text: 'Your Past Entries'
+            size_hint_y: None
+            height: dp(40)
+            font_size: sp(20)
+            halign: 'left'
 
         ScrollView:
             id: main_scroll
-            size_hint_y: 0.8 # Keep this relative size
+            size_hint_y: 0.8
             do_scroll_x: False
-            bar_width: dp(10) # Optional: make scrollbar visible
+            bar_width: dp(10)
 
             BoxLayout:
                 id: entries_container
@@ -74,19 +58,8 @@
                 padding: dp(10)
                 size_hint_y: None
                 height: self.minimum_height
-                # No specific alignment needed here, children control their pos_hint
-
-        Button:
-            text: 'back to home'
-            size_hint_y: None # Fix height
-            height: dp(50) # Example fixed height
-            background_color: ACCENT
-            color: TEXT
-            font_name: "Regular"
-            font_size: dp(16) # Example fixed font size
-            on_press: root.go_home()
 
 <HistoryScreen>:
-    name: 'history' # Good practice to name screens
+    name: 'history'
     HistoryConstructor:
-        id: history_constructor # Give it an id if needed
+        id: history_constructor

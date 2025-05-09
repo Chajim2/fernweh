@@ -4,10 +4,10 @@
 #:import ACCENT utils.loading.ACCENT
 #:import TEXT utils.loading.TEXT
 #:import dp kivy.metrics.dp
+#:import sp kivy.metrics.sp
 
 <LoginScreen>:
     BoxLayout:
-        cols: 1
         canvas.before:
             Color:
                 rgba: PRIMARY
@@ -15,121 +15,84 @@
                 pos: self.pos
                 size: self.size
 
-        orientation:"vertical"
-        Label:
-            text: "Username"
-            font_size: Window.height/28
-            size_hint_y : 0.08
-            font_name: "Regular"
-            color: TEXT
-            text_size: self.size
-            halign: 'center'
-            padding: [Window.width/60, 0, 0,0]
-        
-        TextInput:
-            id: username
-            width : 400
-            hint_text: "username"
-            font_name: "Regular"
-            font_size: Window.height/35
-            #size: dp(20), dp(4)
-            size_hint_y: 0.05
-            size_hint_x: 0.5
-            multiline: False
-            background_color: SECONDARY
-            foreground_color: TEXT
-            pos_hint: {"center_x" : 0.5}
-        
-        Label:
-            text: "password"
-            font_size: Window.height/28
-            size_hint_y : 0.08
-            font_name: "Regular"
-            color: TEXT
-            text_size: self.size
-            halign: 'center'
-            padding: [Window.width/60, 0, 0,0]
-        
-        TextInput:
+        orientation: "vertical"
+        padding: dp(20)
+        spacing: dp(10)
 
-            id: password
-            password: True
-            width: 400
-            hint_text: "password"
-            font_name: "Regular"
-            font_size: Window.height/35
-           #size: dp(20), dp(4)
-            size_hint_y: 0.05
-            size_hint_x: 0.5
-            multiline: False
-            background_color: SECONDARY
-            foreground_color: TEXT
-            pos_hint: {"center_x" : 0.5}
         Widget:
-            id: text_button_seperator
-            size_hint_y: 0.03
+            size_hint_y: 0.1  # Add some space at the top
 
-        Button:
-            id: login_button
-            background_color: 0, 0, 0, 0 
-            canvas.before:
-                Color:
-                    rgba: PRIMARY
-                Rectangle: 
-                    pos: self.pos
-                    size: self.size
-                Color:
-                    rgba: ACCENT
-                Line:
-                    width: 2  
-                    rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
-            font_name: "Bold"
-            font_size: Window.height/30
-            color: TEXT
-            text: "login"
-            size_hint_y: 0.08
-            pos_hint: {"center_x" : 0.5}
-            size_hint_x: 0.5
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_x: 0.6
+            pos_hint: {'center_x': 0.5}
+            spacing: dp(2)
+
+            StyledLabel:
+                text: "Username"
+                font_size: sp(24)
+                size_hint_y: None
+                height: dp(40)
+            
+            StyledTextInput:
+                id: username
+                hint_text: "username"
+                font_size: sp(18)
+                size_hint_y: None
+                height: dp(80)  # Increased height
+                color: TEXT  # Set text color to TEXT
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_x: 0.6
+            pos_hint: {'center_x': 0.5}
+            spacing: dp(2)
+
+            StyledLabel:
+                text: "Password"
+                font_size: sp(24)
+                size_hint_y: None
+                height: dp(40)
+            
+            StyledTextInput:
+                id: password
+                password: True
+                hint_text: "password"
+                font_size: sp(18)
+                size_hint_y: None
+                height: dp(80)  # Increased height
+                color: TEXT  # Set text color to TEXT
+ 
+        Widget:
+            size_hint_y: 0.2
+
+        StyledButton:
+            text: "Login"
+            font_size: sp(20)
+            size_hint_y: None
+            height: dp(50)
+            pos_hint: {'center_x': 0.5}
             on_press: root.login()
 
         Widget:
-            size_hint_y: 0.1
+            size_hint_y: 0.6
         
-        Label:
-            text: "haven't registered yet?"
-            font_size: Window.height/36
-            size_hint_y : 0.08
-            font_name: "Regular"
-            color: TEXT
-            text_size: self.size
-            halign: 'center'
-            padding: [Window.width/60, 0, 0,0]
+        StyledLabel:
+            text: "Haven't registered yet?"
+            font_size: sp(18)
+            size_hint_y: None
+            height: dp(40)
+            pos_hint: {'center_x': 0.5}
         
-        Widget:
-            size_hint_y: 0.1
+
         
-        Button:
-            id: login_button
-            background_color: 0, 0, 0, 0 
-            canvas.before:
-                Color:
-                    rgba: PRIMARY
-                Rectangle: 
-                    pos: self.pos
-                    size: self.size
-                Color:
-                    rgba: ACCENT
-                Line:
-                    width: 2  
-                    rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
-            font_name: "Bold"
-            font_size: Window.height/34
-            color: TEXT
-            text: "register"
-            size_hint_y: 0.06
-            pos_hint: {"center_x" : 0.5}
-            size_hint_x: 0.4
+        StyledButton:
+            text: "Register"
+            font_size: sp(18)
+            size_hint_y: None
+            height: dp(50)
+            pos_hint: {'center_x': 0.5}
             on_press: root.to_register()
 
         Widget:
-            size_hint_y: 0.1
+            size_hint_y: 0.3  # Add some space at the bottom

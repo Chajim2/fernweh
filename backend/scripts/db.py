@@ -126,6 +126,7 @@ class DiaryDatabase:
             author_id INTEGER NOT NULL,
             post_id INTEGER NOT NULL,
             text TEXT NOT NULL,
+            timestamp DATETIME NOT NULL,
             FOREIGN KEY (author_id) REFERENCES users(id)
             FOREIGN KEY (post_id) REFERENCES diary_entries
         )
@@ -191,31 +192,65 @@ class DiaryDatabase:
     def get_all_entries(self, user_id):
         cursor = self.conn.cursor()
 
+        # Get entries with a type indicator
         cursor.execute('''
         SELECT
             diary_entries.id,
             diary_entries.text,
             diary_entries.timestamp,
-            GROUP_CONCAT(entry_emotions.emotion) as emotions
+            GROUP_CONCAT(entry_emotions.emotion) as emotions,
+            'post' as type,
+            diary_entries.authorid
         FROM diary_entries
         LEFT JOIN entry_emotions ON diary_entries.id = entry_emotions.entry_id
         WHERE diary_entries.authorid = ?
         GROUP BY diary_entries.id
-        ORDER BY diary_entries.timestamp DESC
-        ''', (user_id,))
+
+        UNION ALL
+
+        -- Get comments on user's posts
+        SELECT
+            c.post_id as id,
+            c.text,
+            c.timestamp,
+            NULL as emotions,
+            'comment' as type,
+            c.author_id as authorid
+        FROM comments c
+        JOIN diary_entries d ON c.post_id = d.id
+        WHERE d.authorid = ?
+        ORDER BY timestamp DESC
+        ''', (user_id, user_id))
 
         entries = cursor.fetchall()
 
         # Format the entries
         formatted_entries = []
         for entry in entries:
-            emotions = entry[3].split(',') if entry[3] else []
-            formatted_entries.append({
-                'id': entry[0],
-                'text': entry[1],
-                'timestamp': entry[2],
-                'emotions': emotions
-            })
+            entry_id, text, timestamp, emotions, entry_type, author_id = entry
+            
+            # Get username for both posts and comments
+            cursor.execute('SELECT username FROM users WHERE id = ?', (author_id,))
+            username = cursor.fetchone()[0]
+            
+            if entry_type == 'post':
+                emotions_list = emotions.split(',') if emotions else []
+                formatted_entries.append({
+                    'id': entry_id,
+                    'text': text,
+                    'timestamp': timestamp,
+                    'emotions': emotions_list,
+                    'type': 'post',
+                    'username': username
+                })
+            else:  # comment
+                formatted_entries.append({
+                    'id': entry_id,  # This is the post_id for comments
+                    'text': text,
+                    'timestamp': timestamp,
+                    'type': 'comment',
+                    'username': username
+                })
 
         return formatted_entries
 
@@ -308,11 +343,12 @@ class DiaryDatabase:
         cursor = self.conn.cursor()
         if len(text) < 1:
             return False
+        timestamp = datetime.now()
         cursor.execute('''
-            INSERT INTO comments(author_id, post_id, text)
-            VALUES (?, ?, ?)
+            INSERT INTO comments(author_id, post_id, text, timestamp)
+            VALUES (?, ?, ?, ?)
             ''',
-            (int(author_id), int(post_id), text)
+            (int(author_id), int(post_id), text, timestamp)
         )
         self.conn.commit()
         return True
@@ -337,22 +373,25 @@ class DiaryDatabase:
             c.id,
             c.text,
             c.author_id,
-            u.username as author_name
+            u.username as author_name,
+            c.timestamp
         FROM comments c
         JOIN users u ON c.author_id = u.id
         WHERE c.post_id = ?
+        ORDER BY c.timestamp DESC
         ''', (entry_id,))
 
         comments = cursor.fetchall()
 
-        # Format the comments (optional)
+        # Format the comments
         formatted_comments = []
         for comment in comments:
             formatted_comments.append({
                 'id': comment[0],
                 'text': comment[1],
                 'author_id': comment[2],
-                'author_name': comment[3]
+                'author_name': comment[3],
+                'timestamp': comment[4]
             })
 
         return formatted_comments

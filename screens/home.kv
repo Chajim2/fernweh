@@ -3,10 +3,12 @@
 #:import SECONDARY utils.loading.SECONDARY
 #:import ACCENT utils.loading.ACCENT
 #:import TEXT utils.loading.TEXT
+#:import dp kivy.metrics.dp
+#:import sp kivy.metrics.sp
 
 <HomeConstructor>:
     orientation: 'vertical'
-    padding: 20
+    padding: [20, 20, 20, 20]  # [left, top, right, bottom]
     spacing: 10
     
     canvas.before:
@@ -21,119 +23,53 @@
         orientation: 'horizontal'
         spacing: 10
         
-        Button:
+        StyledButton:
             text: 'logout'
             size_hint: (0.2, 0.8)
             pos_hint: {'center_y': 0.5}
-            background_color: 0, 0, 0, 0
-            canvas.before:
-                Color:
-                    rgba: PRIMARY
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                    radius: [15, 15, 15, 15]
-                Color:
-                    rgba: ACCENT
-                Line:
-                    width: 2
-                    rounded_rectangle: (self.x, self.y, self.width, self.height, 15, 15)
             font_size: self.height * 0.4
-            color: TEXT
-            font_name: "Regular"
             on_press: root.logout()
             
         Widget:
             size_hint_x: 0.6
             
-        Button:
+        StyledButton:
             text: 'profile'
             size_hint: (0.2, 0.8)
             pos_hint: {'center_y': 0.5}
-            background_color: 0, 0, 0, 0
-            canvas.before:
-                Color:
-                    rgba: PRIMARY
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                    radius: [15, 15, 15, 15]
-                Color:
-                    rgba: ACCENT
-                Line:
-                    width: 2
-                    rounded_rectangle: (self.x, self.y, self.width, self.height, 15, 15)
             font_size: self.height * 0.4
-            color: TEXT
-            font_name: "Regular"
             on_press: root.go_to_profile()
 
-    BoxLayout:
+    StyledBoxLayout:
         orientation: 'vertical'
         size_hint_y: 0.9
-        padding: 20
+        padding: [20, 20, 20, 20]  # [left, top, right, bottom]
         spacing: 15
-        canvas.before:
-            Color:
-                rgba: PRIMARY
-            RoundedRectangle:
-                pos: self.pos
-                size: self.size
-                radius: [15, 15, 15, 15]
 
-        Label:
+        TitleLabel:
             text: 'dont you dare go hollow'
             size_hint_y: 0.2
-            font_name: 'Bold'
-            font_size: min(self.width * 0.8, self.height * 0.1)
-            color: TEXT
 
-        Button:
-            font_size: self.height * 0.15
+        Widget:
+            size_hint_y: 0.2
+        StyledButton:
             text: 'new diary entry'
             size_hint_y: 0.1
             size_hint_x: 0.6
             pos_hint: {'center_x': 0.5}
-            background_color: 0, 0, 0, 0  # Transparent background
-            canvas.before:
-                Color:
-                    rgba: PRIMARY
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                    radius: [15, 15, 15, 15]
-                Color:
-                    rgba: ACCENT
-                Line:
-                    width: 2
-                    rounded_rectangle: (self.x, self.y, self.width, self.height, 15, 15)
-            color: TEXT
-            font_name: "Regular"
             on_press: root.go_to_diary()
+
         Widget:
             size_hint_y: 0.01
-        Button:
+
+        StyledButton:
             text: 'view entries'
             size_hint_y: 0.1
             size_hint_x: 0.6
             pos_hint: {'center_x': 0.5}
-            background_color: 0, 0, 0, 0  # Transparent background
-            canvas.before:
-                Color:
-                    rgba: PRIMARY
-                RoundedRectangle:
-                    pos: self.pos
-                    size: self.size
-                    radius: [15, 15, 15, 15]
-                Color:
-                    rgba: ACCENT
-                Line:
-                    width: 2
-                    rounded_rectangle: (self.x, self.y, self.width, self.height, 15, 15)
-            font_size: self.height * 0.15
-            color: TEXT
-            font_name: "Regular"
             on_press: root.go_to_history()
+        Widget:
+            size_hint_y:0.5
 
 <HomeScreen>:
     HomeConstructor: 
