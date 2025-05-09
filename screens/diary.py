@@ -26,7 +26,6 @@ class DiaryConstructor(BoxLayout):
         try:
             if not self.width:  
                 return
-            # handling desktop, tablet and phone screen sizes
             if (width / height) > (15/9):
                 padding_h = width / (3.3)
             elif (width / height) > 1:

@@ -3,9 +3,9 @@
 #:import SECONDARY utils.loading.SECONDARY
 #:import ACCENT utils.loading.ACCENT
 #:import TEXT utils.loading.TEXT
+#:import dp kivy.metrics.dp
 
 <DiaryConstructor>:
-    cols: 1
     canvas.before:
         Color:
             rgba: PRIMARY
@@ -14,55 +14,38 @@
             size: self.size
 
     orientation: "vertical"
+    padding: dp(10)
+    spacing: dp(10)
     
     # Top navigation bar
     BoxLayout:
         size_hint_y: 0.1
         spacing: dp(10)
-        padding: [dp(10), 0, dp(10), 0]
         
-        Button:
-            text: "home"
+        StyledButton:
+            text: "Home"
             size_hint_x: 0.2
-            background_color: 0, 0, 0, 0 
-            canvas.before:
-                Color:
-                    rgba: PRIMARY
-                Rectangle: 
-                    pos: self.pos
-                    size: self.size
-                Color:
-                    rgba: ACCENT
-                Line:
-                    width: 2  
-                    rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
-            font_name: "Bold"
             font_size: sp(20)
-            color: TEXT
             on_press: root.go_to_home()
         
         Widget:
             size_hint_x: 0.8
 
-    Label:
-        text: "your topic"
+    StyledLabel:
+        text: "Your Topic"
         font_size: sp(24)
         size_hint_y: 0.08
-        font_name: "Regular"
-        color: TEXT
-        text_size: self.size
         halign: 'left'
-        padding: [dp(10), 0, 0, 0]
 
-    ScrollView:  # Added ScrollView for better mobile handling
+    ScrollView:
         size_hint_y: 0.5
-        do_scroll_x: False  # Disable horizontal scrolling
+        do_scroll_x: False
         
         TextInput:
             id: diary_input
             size_hint_y: None
-            height: max(self.minimum_height, Window.height * 0.4)  # Dynamic height
-            hint_text: "enter your text here"
+            height: max(self.minimum_height, Window.height * 0.4)
+            hint_text: "Enter your text here"
             font_name: "Regular"
             font_size: sp(18)
             padding: dp(10)
@@ -71,34 +54,18 @@
             foreground_color: TEXT
 
     Widget:
-        id: text_button_seperator
         size_hint_y: 0.03
 
-    Button:
+    StyledButton:
         id: button
-        background_color: 0, 0, 0, 0 
-        canvas.before:
-            Color:
-                rgba: PRIMARY
-            Rectangle: 
-                pos: self.pos
-                size: self.size
-            Color:
-                rgba: ACCENT
-            Line:
-                width: 2  
-                rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
-        font_name: "Bold"
+        text: "Submit"
         font_size: sp(20)
-        color: TEXT
-        text: "nekam to poslat"
         size_hint_y: 0.08
-        pos_hint: {"center_x": 0.5}
-        size_hint_x: 0.8  # Increased width for better mobile visibility
+        size_hint_x: 0.8
         on_press: root.submit_text(diary_input.text)
 
     Widget:
-        id: placeholder 
+        id: placeholder
         size_hint_y: 0.3
    
     BoxLayout:

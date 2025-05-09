@@ -5,6 +5,11 @@ import logging
 import jwt
 from jwt import InvalidTokenError
 from functools import wraps
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
 
 # Configure logging
 logging.basicConfig(
@@ -18,7 +23,7 @@ db = DiaryDatabase()
 
 llmcaller = LLMCaller()
 
-SECRET_KEY = 'secret-key'
+SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'default-secret-key')  # Fallback to default if not set
 ALGORITHM = 'HS256'
 
 def require_jwt(f):
@@ -178,22 +183,22 @@ def accept_friend_request(id, data):
 
 
 @app.route('/post_comment', methods = ["POST"])
-def post_comment():
+@require_jwt
+def post_comment(id, data):
     if request.method == "POST":
-        data = request.get_json()
         if data is None:
             return jsonify({"message" : "No data sent"}), 400
-        if db.post_comment(data['user_id'], data['post_id'], data['text']):
+        if db.post_comment(id, data['post_id'], data['text']):
             return jsonify({"message" : "Comment posted"}), 201
         else: return jsonify({"message" : "Comment too short"}), 400
 
 @app.route('/get_comments', methods = ["POST"])
-def get_comments():
+@require_jwt
+def get_comments(id, data):
     if request.method == "POST":
-        data = request.get_json()
         if data is None:
             return jsonify({"message" : "No data sent"}), 400
-        comments = db.get_comments(data['user_id'], data['entry_id'])
+        comments = db.get_comments(id, data['entry_id'])
         if not comments:
             return jsonify({"comments" : [], "message" : "Not the author of the original post"}), 200
         return jsonify({"comments" : comments, "message" : "Returning comments"}), 200
