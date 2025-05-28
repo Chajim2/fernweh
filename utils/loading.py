@@ -4,6 +4,8 @@ import os
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 import requests
+from kivy.uix.boxlayout import BoxLayout
+from kivy.metrics import dp, sp
 
 URL = "https://chajim.pythonanywhere.com/"
 
@@ -32,8 +34,26 @@ def load_fonts():
                     fn_regular=resource_path('utils/font/LiberationSerif-Regular.ttf'))
 
 def show_popup(message):
-        popup = Popup(title='Login Status', content=Label(text=message), size_hint=(0.6, 0.4))
-        popup.open() 
+        content = BoxLayout(orientation='vertical', padding=dp(10))
+        label = Label(
+            text=message,
+            font_name="Regular",
+            font_size=sp(18),
+            color=TEXT
+        )
+        content.add_widget(label)
+        
+        popup = Popup(
+            title='Login Status',
+            content=content,
+            size_hint=(0.6, 0.4),
+            title_font="Regular",
+            title_size=sp(20),
+            title_color=TEXT,
+            background_color=SECONDARY,
+            separator_color=ACCENT
+        )
+        popup.open()
 
 def load_colors():
     PRIMARY = (15.7/100, 17.3/100, 20.4/100, 1)

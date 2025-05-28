@@ -19,6 +19,35 @@
         padding: dp(10)
         spacing: dp(10)
 
+        # Top navigation bar
+        BoxLayout:
+            size_hint_y: None
+            height: dp(40)
+            spacing: dp(10)
+            
+            Button:
+                text: 'Back'
+                font_name: "Bold"
+                size_hint_x: 0.2
+                background_color: 0, 0, 0, 0
+                canvas.before:
+                    Color:
+                        rgba: PRIMARY
+                    Rectangle: 
+                        pos: self.pos
+                        size: self.size
+                    Color:
+                        rgba: ACCENT
+                    Line:
+                        width: 2
+                        rounded_rectangle: (self.x, self.y, self.width, self.height, 10, 10)
+                color: TEXT
+                font_size: dp(18)
+                on_release: root.go_back()
+            
+            Widget:
+                size_hint_x: 0.8
+
         # Header
         BoxLayout:
             size_hint_y: None
@@ -150,15 +179,3 @@
                             on_release: root.submit_comment()
                         Widget:
                             size_hint_x: 0.3
-
-        Button:
-            text: 'Back to History'
-            font_name: "Bold"
-            size_hint_y: None
-            height: dp(50)
-            size_hint_x: 0.4
-            pos_hint: {'center_x': 0.5}
-            background_color: ACCENT
-            color: TEXT
-            font_size: dp(16)
-            on_release: root.go_back()

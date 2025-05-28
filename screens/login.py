@@ -8,7 +8,7 @@ URL = "https://chajim.pythonanywhere.com/login"
 
 class LoginScreen(Screen):
     def __init__(self, **kwargs):
-        Builder.load_file(resource_path('screens/login.kv'))  # Load the KV file
+        Builder.load_file(resource_path('screens/login.kv')) 
         super().__init__(**kwargs)
 
     def login(self):
