@@ -1,35 +1,36 @@
+from os import times
 import sqlite3
 from datetime import datetime
-from argon2 import PasswordHasher
+from argon2 import PasswordHasher, exceptions
 
 class DiaryDatabase:
 
     def __init__(self):
-        self.conn = sqlite3.connect('database.db', check_same_thread=False)
+        self.conn = sqlite3.connect('database.db', check_same_thread=False, detect_types=sqlite3.PARSE_DECLTYPES)
         self.create_tables()
         self.ph = PasswordHasher()
 
-    def correct_password(self, username, password):
+    def check_login(self, username, password):
         cursor = self.conn.cursor()
         try:
             cursor.execute('''
-                SELECT password FROM users
+                SELECT id, password FROM users
                 WHERE username = ?
             ''', (username,))
-            result = cursor.fetchall()
+            result = cursor.fetchone()
 
             if result:
+                user_id, hashed_password = result
                 try:
-                    self.ph.verify(result[0][0], password)
-                    return True
-                except:
-                    return False
-                
-            return False
+                    self.ph.verify(hashed_password, password)
+                    return [(user_id,)] 
+                except exceptions.VerifyMismatchError:
+                    return []
+            return []
 
-        except Exception as e:
-            print(f"Database error: {e}")
-            return False
+        except sqlite3.Error as e:
+            print(f"Database error during login: {e}")
+            return []
 
     def find_user_id(self, username):
         cursor = self.conn.cursor()
@@ -40,23 +41,6 @@ class DiaryDatabase:
         result = cursor.fetchone()
         if result: return result[0]
         return -1
-
-    def check_login(self, username, password):
-        cursor = self.conn.cursor()
-
-        if not self.correct_password(username, password):
-            return []
-
-        try:
-            cursor.execute('''
-                SELECT id FROM users
-                WHERE username = ?
-            ''', (username,))
-            return cursor.fetchall()
-
-        except Exception as e:
-            print(f"Database error: {e}")
-            return []
 
     def username_taken (self, username):
         cursor = self.conn.cursor()
@@ -127,11 +111,24 @@ class DiaryDatabase:
             post_id INTEGER NOT NULL,
             text TEXT NOT NULL,
             timestamp DATETIME NOT NULL,
-            FOREIGN KEY (author_id) REFERENCES users(id)
-            FOREIGN KEY (post_id) REFERENCES diary_entries
+            FOREIGN KEY (author_id) REFERENCES users(id),
+            FOREIGN KEY (post_id) REFERENCES diary_entries(id)
         )
         ''')
 
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS user_summaries (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            summary TEXT,
+            wake_time INT CHECK(wake_time >= 0 AND wake_time <= 24),
+            sleep_time INT CHECK(sleep_time > wake_time AND sleep_time <= 24),
+            activities TEXT,
+            FOREIGN KEY (user_id) REFERENCES users(id)                   
+            )
+            ''')
+
+        
         self.conn.commit()
 
     def save_entry(self, text, emotions, user_id):
@@ -145,16 +142,16 @@ class DiaryDatabase:
 
             entry_id = cursor.lastrowid
 
-            # Save the emotions
             for emotion in emotions:
                 cursor.execute('''
                 INSERT INTO entry_emotions (entry_id, emotion)
                 VALUES (?, ?)
-                ''', (entry_id, emotion))
+                ''', (entry_id, emotion['emotion']))
 
             self.conn.commit()
             return True
-        except:
+        except sqlite3.Error as e:
+            print(f"Database error while saving entry: {e}")
             return False
 
     def add_friend(self, friend_name, user_id):
@@ -224,7 +221,6 @@ class DiaryDatabase:
 
         entries = cursor.fetchall()
 
-        # Format the entries
         formatted_entries = []
         for entry in entries:
             entry_id, text, timestamp, emotions, entry_type, author_id = entry
@@ -245,11 +241,12 @@ class DiaryDatabase:
                 })
             else:  # comment
                 formatted_entries.append({
-                    'id': entry_id,  # This is the post_id for comments
+                    'id': entry_id,  # This is the post_id for the post the comment is under (hopefully lol)
                     'text': text,
                     'timestamp': timestamp,
                     'type': 'comment',
                     'username': username
+                    
                 })
 
         return formatted_entries
@@ -277,6 +274,37 @@ class DiaryDatabase:
             })
 
         return formatted_friends
+    
+    def get_post_with_title(self, entry_id):
+        cursor = self.conn.cursor()
+        cursor.execute('''
+            SELECT
+                de.id,
+                de.text,
+                de.timestamp,
+                u.username,
+                GROUP_CONCAT(ee.emotion) as emotions
+            FROM diary_entries AS de
+            JOIN users AS u ON de.authorid = u.id
+            LEFT JOIN entry_emotions AS ee ON de.id = ee.entry_id
+            WHERE de.id = ?
+            GROUP BY de.id
+        ''', (entry_id,))
+        
+        result = cursor.fetchone()
+
+        if result:
+            post_id, text, timestamp, username, emotions_str = result
+            
+            return {
+                "id": post_id,
+                "author": username,
+                "text": text,
+                "timestamp": timestamp,
+                "title": emotions_str
+            }
+        
+        return None
 
     def add_user(self, username, password):
         cursor = self.conn.cursor()
@@ -360,7 +388,7 @@ class DiaryDatabase:
         cursor.execute('''
         SELECT authorid FROM diary_entries
         WHERE id = ?
-        ''', (entry_id,))
+        ''', (user_id,))
 
         entry_author = cursor.fetchone()
 
@@ -382,7 +410,7 @@ class DiaryDatabase:
         ''', (entry_id,))
 
         comments = cursor.fetchall()
-
+        
         # Format the comments
         formatted_comments = []
         for comment in comments:
@@ -396,6 +424,13 @@ class DiaryDatabase:
 
         return formatted_comments
 
+    def get_user_profile(self, user_id):
+        cursor = self.conn.cursor()
+        cursor.execute("""
+        SELECT * FROM user_summaries
+        WHERE user_id = ?
+        """, (user_id, ))
+        return cursor.fetchone()
 
     def close(self):
         self.conn.close()
