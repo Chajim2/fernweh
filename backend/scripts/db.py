@@ -1,4 +1,3 @@
-from os import times
 import sqlite3
 from datetime import datetime
 from argon2 import PasswordHasher, exceptions
@@ -23,7 +22,7 @@ class DiaryDatabase:
                 user_id, hashed_password = result
                 try:
                     self.ph.verify(hashed_password, password)
-                    return [(user_id,)] 
+                    return [(user_id,)]
                 except exceptions.VerifyMismatchError:
                     return []
             return []
@@ -121,14 +120,15 @@ class DiaryDatabase:
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
             summary TEXT,
-            wake_time INT CHECK(wake_time >= 0 AND wake_time <= 24),
-            sleep_time INT CHECK(sleep_time > wake_time AND sleep_time <= 24),
+            wake_time TEXT NOT NULL,
+            sleep_time TEXT NOT NULL,
             activities TEXT,
-            FOREIGN KEY (user_id) REFERENCES users(id)                   
+            lock_meter REAL NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id)
             )
             ''')
 
-        
+
         self.conn.commit()
 
     def save_entry(self, text, emotions, user_id):
@@ -141,12 +141,11 @@ class DiaryDatabase:
             ''', (user_id, text, timestamp))
 
             entry_id = cursor.lastrowid
-
             for emotion in emotions:
                 cursor.execute('''
                 INSERT INTO entry_emotions (entry_id, emotion)
                 VALUES (?, ?)
-                ''', (entry_id, emotion['emotion']))
+                ''', (entry_id, emotion))
 
             self.conn.commit()
             return True
@@ -224,11 +223,11 @@ class DiaryDatabase:
         formatted_entries = []
         for entry in entries:
             entry_id, text, timestamp, emotions, entry_type, author_id = entry
-            
+
             # Get username for both posts and comments
             cursor.execute('SELECT username FROM users WHERE id = ?', (author_id,))
             username = cursor.fetchone()[0]
-            
+
             if entry_type == 'post':
                 emotions_list = emotions.split(',') if emotions else []
                 formatted_entries.append({
@@ -246,7 +245,7 @@ class DiaryDatabase:
                     'timestamp': timestamp,
                     'type': 'comment',
                     'username': username
-                    
+
                 })
 
         return formatted_entries
@@ -274,7 +273,7 @@ class DiaryDatabase:
             })
 
         return formatted_friends
-    
+
     def get_post_with_title(self, entry_id):
         cursor = self.conn.cursor()
         cursor.execute('''
@@ -290,12 +289,12 @@ class DiaryDatabase:
             WHERE de.id = ?
             GROUP BY de.id
         ''', (entry_id,))
-        
+
         result = cursor.fetchone()
 
         if result:
             post_id, text, timestamp, username, emotions_str = result
-            
+
             return {
                 "id": post_id,
                 "author": username,
@@ -303,7 +302,7 @@ class DiaryDatabase:
                 "timestamp": timestamp,
                 "title": emotions_str
             }
-        
+
         return None
 
     def add_user(self, username, password):
@@ -410,7 +409,7 @@ class DiaryDatabase:
         ''', (entry_id,))
 
         comments = cursor.fetchall()
-        
+
         # Format the comments
         formatted_comments = []
         for comment in comments:
@@ -430,7 +429,33 @@ class DiaryDatabase:
         SELECT * FROM user_summaries
         WHERE user_id = ?
         """, (user_id, ))
-        return cursor.fetchone()
+        data = cursor.fetchone()
+        if not data:
+            return {}
+        formated_profile = {"id": data[1], "summary" : data[2], "wake_time" : data[3], "sleep_time" : data[4], "activities":data[5], "lock_meter":data[6]}
+        return formated_profile
+
+    def create_user_profile(self, data, id):
+        cursor = self.conn.cursor()
+        cursor.execute("""
+            INSERT INTO user_summaries(
+            user_id, summary, wake_time,sleep_time, activities, lock_meter)
+            VALUES(?, ?, ?, ?, ?, ?)
+        """, (id,data['summary'], data['wake_time'], data['sleep_time'], data['activities'], data['lock_meter']))
+
+        self.conn.commit()
+        return True
+
+    def update_user_summary(self, new_summary, id):
+        cursor = self.conn.cursor()
+        cursor.execute("""
+            UPDATE user_summaries SET
+            summary = ?
+            WHERE user_id = ?
+        """, (new_summary, id))
+
+        self.conn.commit()
+        return True
 
     def close(self):
         self.conn.close()

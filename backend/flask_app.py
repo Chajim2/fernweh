@@ -216,4 +216,14 @@ def get_post_with_title(id, data):
 def get_schedule(id, data):
     fixed_tasks_json = data['fixed_tasks_json']
     daily_notes = data['daily_notes']
-    
+    profile = db.get_user_profile(id) 
+    if not profile(): return jsonify({"message" : "User pfoile does not exist or cant be accessed in db"}) 
+    return jsonify({"message" : "returning user profile", "profile" : llmcaller.schedule_day(daily_notes,
+                    profile['summary'], fixed_tasks_json, profile['wake_time'], profile['sleep_time'], profile['activities'])}) 
+
+
+@app.route('/create_user_profile', methods = ["POST"])
+@require_jwt
+def create_user_profile(id, data):
+    if(db.create_user_profile(data, id)): return jsonify({"message" : "successfully created your profile"}), 200
+    return jsonify({"message" : "erroe while creating profile"}), 400

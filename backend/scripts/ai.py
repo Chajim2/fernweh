@@ -66,28 +66,63 @@ class LLMCaller:
         response = self.model.generate_content(prompt)
         return response.text
 
-    def schedule_day(self, daily_notes, summary, fixed_tasks_json):
-        if detect(daily_notes) != "en":
-            daily_notes = self.translate_to_english(daily_notes)
-        prompt = (
+def schedule_day(self, daily_notes, summary, fixed_tasks_json, wake_time, sleep_time, activities, lock_meter):
+    if detect(daily_notes) != "en":
+        daily_notes = self.translate_to_english(daily_notes)
+    
+    prompt = (
             "You are an intelligent daily scheduler assistant.\n\n"
             "INPUTS:\n\n"
             f"1. Fixed Tasks (cannot be moved or rescheduled):\n{fixed_tasks_json}\n\n"
-            f"2. User Summary (includes all other tasks to schedule, daily habits, preferred awake hours, and time preferences):\n{summary}\n\n"
+            f"2. User Summary (includes prioritized tasks, daily habits, and time preferences):\n{summary}\n\n"
             f"3. Additional Notes for Today:\n{daily_notes}\n\n"
+            f"4. Available Activities (optional activities the user enjoys):\n{activities}\n\n"
+            f"5. User Awake Window: from {wake_time} to {sleep_time}\n"
+            f"6. Lock Meter (relaxation percentage): {lock_meter}%\n\n"
             "TASK:\n\n"
-            "Using the fixed tasks as immovable anchors, create a daily schedule that fits in all other tasks logically and efficiently, respecting the user's preferences, habits, and awake hours described in the User Summary and Additional Notes.\n"
+            "Using the fixed tasks as immovable anchors, create a daily schedule that fits all other tasks logically and efficiently, respecting the user's preferences, habits, and awake hours.\n\n"
+            "SCHEDULING RULES:\n"
             "- Schedule fixed tasks exactly at their given start times.\n"
-            "- Schedule all other tasks from the user summary around the fixed tasks considering duration, priority, and user preferences.\n"
-            "- Avoid scheduling tasks during times the user dislikes or prefers to avoid.\n"
-            "- Output a valid JSON array, where each element is an object containing:\n"
-            '- "id": unique task identifier,\n'
-            '- "title": task name,\n'
-            '- "duration": length in minutes,\n'
-            '- "start_time": scheduled start time in 24h "HH:MM" format,\n'
-            '- "notes": optional string with additional info about the task.\n'
-            "If some tasks cannot fit into the available time, omit them.\n"
-            "Only output the JSON array — no additional text or explanations.\n"
+            "- Prioritize tasks from the User Summary. If time remains, use the 'Available Activities' list to fill gaps.\n"
+            "- Respect the Lock Meter: schedule approximately that percentage of the awake day as relaxation time, distributed throughout the day rather than in one chunk.\n"
+            "- Use best practices from productivity science:\n"
+            "  • Group work into 50–90 minute focus blocks followed by 5–15 minute breaks.\n"
+            "  • Schedule demanding or important tasks earlier in the day (after waking up).\n"
+            "  • Place lighter or creative tasks in the afternoon or evening.\n"
+            "  • Avoid back-to-back unrelated tasks to minimize mental fatigue (group similar tasks where possible).\n"
+            "  • Include meals and short breaks even if Lock Meter is low.\n"
+            "- Avoid scheduling tasks beyond the user's sleep time.\n"
+            "- Avoid scheduling tasks at times the user dislikes or prefers to avoid.\n\n"
+            "OUTPUT:\n"
+           """ Your response must be a valid JSON array. Each element should be an object with the following structure:
+            [
+              {
+                "id": 1,
+                "title": "Wake up",
+                "duration": 0,
+                "start_time": "07:10",
+                "notes": ""
+              },
+              {
+                "id": 2,
+                "title": "Morning Routine",
+                "duration": 50,
+                "start_time": "07:10",
+                "notes": ""
+              },
+              {
+                "id": 3,
+                "title": "Class",
+                "duration": 120,
+                "start_time": "08:00",
+                "notes": ""
+              }
+            ]"""
+
+            "If some tasks cannot fit, omit them, dont overschedule. Output only the JSON array — no explanations or extra text."
         )
-        response = self.model.generate_content(prompt)  
-        return response.text
+
+    response = self.model.generate_content(prompt)  
+    return response.text
+
+        
