@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify
-from sympy import true
 from scripts.db import DiaryDatabase
 from scripts.ai import LLMCaller
 import logging
