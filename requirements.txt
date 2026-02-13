@@ -1,3 +1,6 @@
-kivy
+#kivy
 requests
 flask
+numpy
+google-genai
+pydantic
