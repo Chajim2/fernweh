@@ -15,25 +15,35 @@ def get_umbrella_terms(text):
         )
 
 def get_chunks(text):
-    return f"""You are the semantic core of "Fernweh," a social journaling application.
-        Your goal is to prepare raw user diary entries for vector embedding.
+    return f"""You are a semantic processor for the "Fernweh" social journaling application.
+Your task is to transform raw diary entries into standalone, context-rich chunks optimized for vector embedding.
 
-        INPUT: {text}
+INPUT TEXT:
+{text}
 
-        YOUR TASKS:
-        1.  **Chunking:** Split the text into logical, atomic "thoughts" or events. Do not split by sentence if the sentences belong to one thought.
-        2.  **Context Injection (CRITICAL):** Rewrite each chunk so it stands alone.
-        * Replace pronouns (he, she, it, that) with the specific entities mentioned earlier in the text.
-        * If the user says "I went there", change it to "I went to [Berlin]".
-        * The embedding model will only see the chunk, so it MUST contain all context.
-        3.  **Sentiment Classification:** Assign one of these tags to each chunk:
-        * `JOY` (Success, happiness, gratitude) -> Triggers "Hype" notifications.
-        * `CURIOSITY` (Learning, exploring, ideas) -> Triggers "Brainstorming" notifications.
-        * `SADNESS` (Pain, loss, loneliness) -> Triggers "Support/Empathy" notifications.
-        * `ANGER` (Frustration, conflict) -> Triggers "Venting" notifications.
-        * `NEUTRAL` (Facts, logistics) -> No trigger.
+INSTRUCTIONS:
 
-        OUTPUT FORMAT: JSON only."""
+1. SEMANTIC CHUNKING
+   - Divide the text into logical, atomic thoughts
+   - Keep related sentences together even if they span multiple lines
+   - Each chunk should represent one complete idea or event
+
+2. CONTEXT INJECTION
+   - Rewrite each chunk to be fully self-contained
+   - Replace ALL pronouns with their specific referents from the entry
+   - Include relevant context (names, places, times) directly in each chunk
+   - Example transformation:
+     Before: "I went there with him yesterday"
+     After: "Petr went to Berlin with Pavel on March 15th"
+
+3. OUTPUT FORMAT
+   Return a valid JSON array on a single line with no extra whitespace:
+   ["Chunk 1 text here", "Chunk 2 text here", "Chunk 3 text here"]
+   
+   - Use double quotes for strings
+   - Escape internal quotes with backslash
+   - No newlines, no explanatory text, only the JSON array
+"""
 
 def get_update_user_summary_prompt(new_entry, summary):
     return (

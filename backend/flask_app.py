@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 import os
 from flask_cors import CORS
 from datetime import datetime, timedelta, timezone
+from scripts.auth import require_jwt, create_refresh_jwt, create_auth_jwt, SECRET_KEY, ALGORITHM
+import json
 
 # Load environment variables
 load_dotenv()
@@ -21,49 +23,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-db = DiaryDatabase()
+with app.app_context():
+    db = DiaryDatabase()
+
 CORS(app)
  
 llmcaller = LLMCaller()
 
-SECRET_KEY = os.getenv('JWT_SECRET_KEY', 'default-secret-key')
-ALGORITHM = 'HS256'
-
-def require_jwt(f):
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        data = request.get_json()
-
-        if not data or 'id' not in data:
-            return jsonify({'error': 'JWT is missing in request body'}), 401
-
-        token = data['id']
-        #print(token)
-
-        try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            return f(*args, **kwargs, id=payload['id'], data=data)
-
-        except InvalidTokenError:
-            return jsonify({'error': 'Invalid token'}), 401
-
-    return decorated_function
-
-def create_refresh_jwt(payload_data):
-    payload_data['exp'] = datetime.now(timezone.utc) + timedelta(hours = 2 * 168)
-    payload = payload_data.copy()
-
-    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-
-    return token
-
-def create_auth_jwt(payload_data):
-    payload_data['exp'] = datetime.now(timezone.utc) + timedelta(hours = 3)
-    payload = payload_data.copy()
-
-    token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
-
-    return token
+ 
 
 @app.route('/')
 def hello_world():
@@ -136,10 +103,16 @@ def add_friend(id, data):
 @require_jwt
 def save_entry(id, data):
     if db.save_entry(data['text'], data['emotions'], id):
-        profile = db.get_user_profile(id)
-        if profile and 'summary' in profile:
-            llmcaller.update_user_summary(data['text'], profile['summary'])
-        return jsonify({"message": "Entry saved"}), 201
+        chunks = llmcaller.get_pieces_to_vector(data['text'])
+        chunks = json.loads(chunks)
+        print(chunks, type(chunks))
+        #TODO implement the vectorization
+        
+        #profile = db.get_user_profile(id)
+        #if profile and 'summary' in profile:
+         #   llmcaller.update_user_summary(data['text'], profile['summary'])
+        
+        return jsonify({"message": "Entry saved", "chunks" : chunks}), 201
     else:
         return jsonify({"message": "Error while trying to save entry"}), 400
 

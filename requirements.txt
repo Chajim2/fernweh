@@ -2,5 +2,10 @@
 requests
 flask
 numpy
-google-genai
-pydantic
+google-generativeai
+deepl
+dotenv
+argon2-cffi
+langdetect
+PyJwt
+flask-cors

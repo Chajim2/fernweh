@@ -1,16 +1,16 @@
 import sqlite3
 from datetime import datetime
+from scripts.db_utils import get_db
 from argon2 import PasswordHasher, exceptions
 
 class DiaryDatabase:
-
     def __init__(self):
-        self.conn = sqlite3.connect('database.db', check_same_thread=False, detect_types=sqlite3.PARSE_DECLTYPES)
         self.create_tables()
         self.ph = PasswordHasher()
 
     def check_login(self, username, password):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
         try:
             cursor.execute('''
                 SELECT id, password FROM users
@@ -32,7 +32,8 @@ class DiaryDatabase:
             return []
 
     def find_user_id(self, username):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
         cursor.execute('''
             SELECT id FROM users
             WHERE username = ?
@@ -42,7 +43,8 @@ class DiaryDatabase:
         return -1
 
     def username_taken (self, username):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
         try:
             cursor.execute('''
                 SELECT id FROM users
@@ -56,7 +58,8 @@ class DiaryDatabase:
 
 
     def create_tables(self):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS diary_entries (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -128,12 +131,12 @@ class DiaryDatabase:
             )
             ''')
 
-
-        self.conn.commit()
+        conn.commit()
 
     def save_entry(self, text, emotions, user_id):
         try:
-            cursor = self.conn.cursor()
+            conn = get_db()
+            cursor = conn.cursor()
             timestamp = datetime.now()
             cursor.execute('''
             INSERT INTO diary_entries (authorid, text, timestamp)
@@ -147,15 +150,15 @@ class DiaryDatabase:
                 VALUES (?, ?)
                 ''', (entry_id, emotion))
 
-            self.conn.commit()
+            conn.commit()
             return True
         except sqlite3.Error as e:
             print(f"Database error while saving entry: {e}")
             return False
 
     def add_friend(self, friend_name, user_id):
-        cursor = self.conn.cursor()
-        cursor.execute('SELECT * FROM users')
+        conn = get_db()
+        cursor = conn.cursor()
         cursor.execute('''
             SELECT id FROM users
             WHERE username = ?
@@ -182,11 +185,12 @@ class DiaryDatabase:
             VALUES (?, ?)
         ''', (user_id, friend_id))
 
-        self.conn.commit()
+        conn.commit()
         return 2
 
     def get_all_entries(self, user_id):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
 
         # Get entries with a type indicator
         cursor.execute('''
@@ -252,7 +256,8 @@ class DiaryDatabase:
 
 
     def get_friends(self, user_id):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
         # Get all friends (both where user is user_id and where user is friend_id)
         cursor.execute('''
             SELECT u.id, u.username
@@ -275,7 +280,8 @@ class DiaryDatabase:
         return formatted_friends
 
     def get_post_with_title(self, entry_id):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
         cursor.execute('''
             SELECT
                 de.id,
@@ -306,7 +312,8 @@ class DiaryDatabase:
         return None
 
     def add_user(self, username, password):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
 
         hashed = self.ph.hash(password)
 
@@ -315,20 +322,22 @@ class DiaryDatabase:
             VALUES
                 (?, ?)
         ''', (username, hashed))
-        self.conn.commit()
+        conn.commit()
 
     def remove_friend_request(self, user_id, friend_id):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
 
         cursor.execute('''
             DELETE FROM friend_requests
             WHERE user_id = ?
             AND friend_id = ?
         ''', (friend_id, user_id)) #possible issue here, swap the two arguments around
-        self.conn.commit()
+        conn.commit()
 
     def send_friend_request(self, user_id, friend_name):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
         friend_id = self.find_user_id(friend_name)
         if friend_id == -1: return False
         cursor.execute('''
@@ -337,11 +346,12 @@ class DiaryDatabase:
             ''',
             (int(user_id), int(friend_id))
         )
-        self.conn.commit()
+        conn.commit()
         return True
 
     def get_requests(self, user_id):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
         cursor.execute('''
             SELECT u.username FROM friend_requests fr
             JOIN users u
@@ -367,7 +377,8 @@ class DiaryDatabase:
         return True
 
     def post_comment(self, author_id, post_id, text):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
         if len(text) < 1:
             return False
         timestamp = datetime.now()
@@ -377,11 +388,12 @@ class DiaryDatabase:
             ''',
             (int(author_id), int(post_id), text, timestamp)
         )
-        self.conn.commit()
+        conn.commit()
         return True
 
     def get_comments(self, user_id, entry_id):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
 
         # First check if the user is the author of the entry
         cursor.execute('''
@@ -424,7 +436,8 @@ class DiaryDatabase:
         return formatted_comments
 
     def get_user_profile(self, user_id):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
         cursor.execute("""
         SELECT * FROM user_summaries
         WHERE user_id = ?
@@ -436,26 +449,29 @@ class DiaryDatabase:
         return formated_profile
 
     def create_user_profile(self, data, id):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO user_summaries(
             user_id, summary, wake_time,sleep_time, activities, lock_meter)
             VALUES(?, ?, ?, ?, ?, ?)
         """, (id,data['summary'], data['wake_time'], data['sleep_time'], data['activities'], data['lock_meter']))
 
-        self.conn.commit()
+        conn.commit()
         return True
 
     def update_user_summary(self, new_summary, id):
-        cursor = self.conn.cursor()
+        conn = get_db()
+        cursor = conn.cursor()
         cursor.execute("""
             UPDATE user_summaries SET
             summary = ?
             WHERE user_id = ?
         """, (new_summary, id))
 
-        self.conn.commit()
+        conn.commit()
         return True
 
     def close(self):
-        self.conn.close()
+        conn = get_db()
+        conn.close()
