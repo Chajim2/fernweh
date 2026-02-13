@@ -4,10 +4,14 @@ app_icon.ico
 build/
 dist/
 
-backend/fernweh_flask_env
+flask_env
+xd.py # <- helper file
+
 
 diary_entries.db
 diary_entries_backup.db
+
+backend/database.db
 
 _legacy
 __pycache__/
