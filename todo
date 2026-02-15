@@ -1,5 +1,0 @@
-DEBUG the save entry endpoint, seems like the sqlite-vector extension aint
-properly initialized
-
-
-#MIGHT WANNA LOOK INTO SQLITE SYNC, LOOKS JUICY AF
