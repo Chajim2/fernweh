@@ -1,7 +1,8 @@
-import sqlite3
+import pysqlite3 as sqlite3
 from datetime import datetime
 from scripts.db_utils import get_db
 from argon2 import PasswordHasher, exceptions
+import json
 
 class DiaryDatabase:
     def __init__(self):
@@ -130,10 +131,20 @@ class DiaryDatabase:
             FOREIGN KEY (user_id) REFERENCES users(id)
             )
             ''')
+ 
+        cursor.execute('''
+            CREATE TABLE IF NOT EXISTS vector_chunks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            embedding BLOB,
+            post_id INTEGER NOT NULL,
+            FOREIGN KEY (post_id) REFERENCES diary_entries(id) ON DELETE CASCADE
+        )
+        ''')
 
         conn.commit()
 
-    def save_entry(self, text, emotions, user_id):
+    def save_entry(self, text: str, emotions: list[str], user_id: int,\
+                   vector_list: list[list[float]]) -> bool:
         try:
             conn = get_db()
             cursor = conn.cursor()
@@ -149,12 +160,55 @@ class DiaryDatabase:
                 INSERT INTO entry_emotions (entry_id, emotion)
                 VALUES (?, ?)
                 ''', (entry_id, emotion))
-
+            
+            self.save_vectors(vector_list, entry_id)
             conn.commit()
+
             return True
+        
         except sqlite3.Error as e:
             print(f"Database error while saving entry: {e}")
             return False
+
+    
+    def save_vectors(self, vector_list: list[float], post_id : int) -> bool:
+        try:
+            conn = get_db()
+            cursor = conn.cursor()
+
+            for vector in vector_list:
+                cursor.execute('''
+                    INSERT INTO vector_chunks(post_id, embedding)
+                    VALUES (?, vector_as_f32(?))
+                ''', (post_id, json.dumps(vector)))
+
+            return True
+        
+        except sqlite3.Error as e:
+            print(f"Vector save error: {e}")
+            raise
+
+
+    def find_similiar_vectors(self, vector: list[float], user_id, n: int) -> list[int]:
+        # returns the id of n posts that were deemed most similiar via vector similiarity
+
+        conn = get_db()
+        cursor = conn.cursor()
+
+        cursor.execute('''
+            SELECT de.id
+            FROM vector_full_scan('vector_chunks', 'embedding', vector_as_f32(?)) as v
+            JOIN vector_chunks vc ON vc.rowid = v.rowid
+            JOIN diary_entries de ON de.id = vc.post_id
+            JOIN friendships fs ON fs.friend_id = de.authorid 
+            WHERE fs.user_id = ?
+            ORDER BY v.distance
+            LIMIT ?
+        ''', (json.dumps(vector), user_id, n))
+
+        result = cursor.fetchall()
+        return [row[0] for row in result]
+
 
     def add_friend(self, friend_name, user_id):
         conn = get_db()

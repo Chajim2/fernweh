@@ -9,7 +9,7 @@ GET {{host}}
 POST {{host}}/login
 Content-Type: application/json
 
-{"username": "{{DEBUG_USER}}", "password": "{{DEBUG_PASS}}"}
+{"username": "{{DEBUG_USER2}}", "password": "{{DEBUG_PASS2}}"}
 
 ### Use the login token in the next
 @token = {{login.response.body.$.id}}
@@ -18,7 +18,7 @@ Content-Type: application/json
 POST {{host}}/register
 Content-Type: application/json
 
-{"username": "{{DEBUG_USER}}", "password": "{{DEBUG_PASS}}"}
+{"username": "{{DEBUG_USER2}}", "password": "{{DEBUG_PASS2}}"}
 
 ### POST Save entry
 POST {{host}}/save_entry
@@ -32,4 +32,21 @@ POST {{host}}/get_emotions
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
-{"id" : "{{token}}", "text": "Had a good lunch today. Saw a stranger get robbed, poor fella.", "emotions" : "Good"}
+{"id" : "{{token}}", "text": "Had a good lunch today. Saw a stranger get killed, poor fella.", "emotions" : "Good"}
+
+
+### POST Add friend 
+POST {{host}}/add_friend
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"id" : "{{token}}", "friend_name" : "{{DEBUG_PASS1}}"}
+
+
+### POST Get post with title
+POST {{host}}/get_post_with_title
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"id" : "{{token}}", "entry_id" : "65"}
+

@@ -11,6 +11,7 @@ from flask_cors import CORS
 from datetime import datetime, timedelta, timezone
 from scripts.auth import require_jwt, create_refresh_jwt, create_auth_jwt, SECRET_KEY, ALGORITHM
 import json
+from scripts.vector import vectorize
 
 # Load environment variables
 load_dotenv()
@@ -30,7 +31,6 @@ CORS(app)
  
 llmcaller = LLMCaller()
 
- 
 
 @app.route('/')
 def hello_world():
@@ -102,17 +102,21 @@ def add_friend(id, data):
 @app.route('/save_entry', methods = ['POST'])
 @require_jwt
 def save_entry(id, data):
-    if db.save_entry(data['text'], data['emotions'], id):
-        chunks = llmcaller.get_pieces_to_vector(data['text'])
-        chunks = json.loads(chunks)
-        print(chunks, type(chunks))
-        #TODO implement the vectorization
-        
+    chunks = llmcaller.get_pieces_to_vector(data['text'])
+    chunks = json.loads(chunks)
+    vector_list = vectorize(chunks)
+    
+    if db.save_entry(data['text'], data['emotions'], id, vector_list): 
         #profile = db.get_user_profile(id)
         #if profile and 'summary' in profile:
          #   llmcaller.update_user_summary(data['text'], profile['summary'])
-        
-        return jsonify({"message": "Entry saved", "chunks" : chunks}), 201
+
+        # have to decide the number of ids ima send back 
+        similar_posts = []
+        for vector in vector_list:
+            similar_posts.extend(db.find_similiar_vectors(vector, id, 3))
+
+        return jsonify({"message": "Entry saved", "similar_posts" : similar_posts}), 201
     else:
         return jsonify({"message": "Error while trying to save entry"}), 400
 

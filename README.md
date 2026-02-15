@@ -2,4 +2,4 @@ Fernweh is a journaling app that analyzes your writing and helps you identify yo
 
 Download at: https://chajim2.itch.io/fernweh
 
-**Technologies**: Python - Flask, SQLite, Kivy
+**Technologies**: Python - Flask, SQLite, Kivy (Legacy)

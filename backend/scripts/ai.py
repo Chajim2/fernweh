@@ -1,22 +1,23 @@
 import deepl
 from langdetect import detect
 import scripts.prompts as prompts
-import google.generativeai as genai
+import google.genai as genai
 from dotenv import load_dotenv
 import os
 import numpy as np
-import typing
+from pydantic import BaseModel, Field
 
 # Load environment variables
 load_dotenv()
 
-MODEL = "models/gemma-3-27b-it"
+MODEL = "gemini-2.5-flash-lite"
 EMBEDING_MODEL = "gemini-embedding-001"
 EMBEDING_SIZE = 512
 
 
-class Chunk(typing.TypedDict):
-    text: str
+class Chunk(BaseModel):
+    text: str = Field("One atomic part of the orginal text with pronouns replaced\
+                       by more specific wors")
 
 
 class LLMCaller:
@@ -25,8 +26,7 @@ class LLMCaller:
         if not self.api_key:
             raise ValueError("GEMINI_API_KEY not found in environment variables")
 
-        genai.configure(api_key=self.api_key)
-        self.model = genai.GenerativeModel(MODEL) 
+        self.client = genai.Client(api_key=self.api_key)
         
         self.deepl_auth_key = os.getenv('DEEPL_API_KEY')
         if not self.deepl_auth_key:
@@ -42,23 +42,36 @@ class LLMCaller:
         if detect(text) != "en":
             text = self.translate_to_english(text)
         
-        response = self.model.generate_content(prompts.get_umbrella_terms(text))
+        response = self.client.models.\
+            generate_content(model = MODEL,
+                             contents=prompts.get_umbrella_terms(text),
+                             )
+
         return response.text
 
 
     def get_pieces_to_vector(self, text: str) -> list[str]:
-        response = self.model.generate_content(
-            prompts.get_chunks(text),
-            generation_config=genai.GenerationConfig(
-                #response_mime_type= "application/json",
-                response_schema= list[Chunk] 
+        response = self.client.models.generate_content(
+            model = MODEL,
+            contents = prompts.get_chunks(text),
+            config=genai.types.GenerateContentConfig(
+                response_mime_type= "application/json",
+                response_schema= list[Chunk]
             )
         )
 
         return response.text
 
-    def get_embedding(text: str) -> np.ndarray:
-        return
+    def get_embeddings(self, list_of_chunks: str) -> list[np.ndarray]:
+        response = self.client.models.embed_content(
+            model=EMBEDING_MODEL,
+            contents=list_of_chunks,
+            config=genai.types.EmbedContentConfig(output_dimensionality=768,
+                                                  task_type='SEMANTIC_SIMILARITY'),
+        )
+        
+        #print(response.embeddings)
+        return response.embeddings
 
     #additional functions meant for toki (rip) that arent in use at the moment might delete later
     def update_user_summary(self, new_entry, summary):

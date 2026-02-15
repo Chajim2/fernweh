@@ -2,10 +2,12 @@
 requests
 flask
 numpy
-google-generativeai
+google-genai
 deepl
 dotenv
 argon2-cffi
 langdetect
 PyJwt
 flask-cors
+sqliteai-vector
+pysqlite3
