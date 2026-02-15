@@ -14,7 +14,13 @@ def get_db() -> sqlite3.Connection:
         g.db.enable_load_extension(False)
 
         cursor = g.db.cursor()
-        cursor.execute("SELECT vector_init('vector_chunks'," \
+        table_exists = cursor.execute("""
+            SELECT name FROM sqlite_master 
+            WHERE type='table' AND name='vector_chunks'
+        """).fetchone()
+
+        if table_exists:
+            cursor.execute("SELECT vector_init('vector_chunks'," \
                                           "'embedding'," \
                                           "'type=FLOAT32,dimension=768')")
     return g.db
