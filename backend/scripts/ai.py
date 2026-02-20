@@ -4,7 +4,6 @@ import scripts.prompts as prompts
 import google.genai as genai
 from dotenv import load_dotenv
 import os
-import numpy as np
 from pydantic import BaseModel, Field
 
 # Load environment variables
@@ -62,7 +61,7 @@ class LLMCaller:
 
         return response.text
 
-    def get_embeddings(self, list_of_chunks: str) -> list[np.ndarray]:
+    def get_embeddings(self, list_of_chunks: list[str]) -> list[float]:
         response = self.client.models.embed_content(
             model=EMBEDING_MODEL,
             contents=list_of_chunks,
@@ -70,7 +69,6 @@ class LLMCaller:
                                                   task_type='SEMANTIC_SIMILARITY'),
         )
         
-        #print(response.embeddings)
         return response.embeddings
 
     #additional functions meant for toki (rip) that arent in use at the moment might delete later

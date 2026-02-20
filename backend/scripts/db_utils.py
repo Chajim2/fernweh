@@ -22,5 +22,7 @@ def get_db() -> sqlite3.Connection:
         if table_exists:
             cursor.execute("SELECT vector_init('vector_chunks'," \
                                           "'embedding'," \
-                                          "'type=FLOAT32,dimension=768')")
+                                          "'type=FLOAT32, " \
+                                          " dimension=768," \
+                                          " distance=COSINE')")
     return g.db

@@ -1,5 +1,6 @@
 @host = http://127.0.0.1:5000
 
+#@host = https://chajim.pythonanywhere.com/ 
 ### GET simple aplive check
 GET {{host}}
 
