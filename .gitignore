@@ -16,6 +16,8 @@ diary_entries_backup.db
 database.db
 backend/database.db
 
+
+
 _legacy
 __pycache__/
 *.pyc
