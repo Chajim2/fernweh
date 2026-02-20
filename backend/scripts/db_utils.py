@@ -26,3 +26,7 @@ def get_db() -> sqlite3.Connection:
                                           " dimension=768," \
                                           " distance=COSINE')")
     return g.db
+
+def query_in(cursor, query, values):
+    placeholders = ', '.join('?' * len(values))
+    return cursor.execute(query.replace(':in', f'({placeholders})'), values)

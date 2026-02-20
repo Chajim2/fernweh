@@ -1,8 +1,9 @@
 import pysqlite3 as sqlite3
 from datetime import datetime
-from scripts.db_utils import get_db
+from scripts.db_utils import get_db, query_in
 from argon2 import PasswordHasher, exceptions
 import json
+
 
 class DiaryDatabase:
     def __init__(self):
@@ -333,10 +334,12 @@ class DiaryDatabase:
 
         return formatted_friends
 
-    def get_post_with_title(self, entry_id):
+    def get_posts_with_title(self, entry_ids : list[int] | int):
+        if type(entry_ids) == int:
+            entry_ids = [entry_ids]
         conn = get_db()
         cursor = conn.cursor()
-        cursor.execute('''
+        query = '''
             SELECT
                 de.id,
                 de.text,
@@ -346,24 +349,25 @@ class DiaryDatabase:
             FROM diary_entries AS de
             JOIN users AS u ON de.authorid = u.id
             LEFT JOIN entry_emotions AS ee ON de.id = ee.entry_id
-            WHERE de.id = ?
+            WHERE de.id IN :in 
             GROUP BY de.id
-        ''', (entry_id,))
+        '''
+        query_in(cursor, query, entry_ids)
+        results = cursor.fetchall()
 
-        result = cursor.fetchone()
-
-        if result:
+        results_formatted = []       
+        for result in results:
             post_id, text, timestamp, username, emotions_str = result
 
-            return {
+            results_formatted.append({
                 "id": post_id,
                 "author": username,
                 "text": text,
                 "timestamp": timestamp,
                 "title": emotions_str
-            }
+            })
 
-        return None
+        return results_formatted
 
     def add_user(self, username, password):
         conn = get_db()

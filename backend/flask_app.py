@@ -116,6 +116,8 @@ def save_entry(id, data):
         for vector in vector_list:
             similar_posts.extend(db.find_similiar_vectors(vector, id, 3))
 
+        similar_posts = list(set[similar_posts]) # remove duplicates
+
         return jsonify({"message": "Entry saved", "similar_posts" : similar_posts}), 201
     else:
         return jsonify({"message": "Error while trying to save entry"}), 400
@@ -185,7 +187,18 @@ def get_comments(id, data):
 @app.route('/get_post_with_title', methods = ["POST"])
 @require_jwt
 def get_post_with_title(id, data):
-    return jsonify({"post" : db.get_post_with_title(data['entry_id'])}), 200
+    post = db.get_posts_with_title(data['entry_id'])
+    if post == []:
+        post = None
+    else:
+        post = post[0]
+
+    return jsonify({"post" : post}), 200
+
+@app.route('/batch_get_posts', methods = ['POST'])
+@require_jwt
+def batch_get_posts(id, data):
+    return jsonify({"posts" : db.get_posts_with_title(data['entry_ids'])}), 200
 
 @app.route('/get_schedule', methods = ["POST"])
 @require_jwt    

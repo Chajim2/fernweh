@@ -51,3 +51,9 @@ Authorization: Bearer {{token}}
 
 {"id" : "{{token}}", "entry_id" : "65"}
 
+### POST Get batch get posts
+POST {{host}}/batch_get_posts
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"id" : "{{token}}", "entry_ids" : [2,3]}
