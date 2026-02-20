@@ -1,4 +1,3 @@
-import numpy as np
 from scripts.ai import LLMCaller
 
 llmcaller = LLMCaller()
