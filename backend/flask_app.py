@@ -116,7 +116,7 @@ def save_entry(id, data):
         for vector in vector_list:
             similar_posts.extend(db.find_similiar_vectors(vector, id, 3))
 
-        similar_posts = list(set[similar_posts]) # remove duplicates
+        similar_posts = list(set(similar_posts)) # remove duplicates
 
         return jsonify({"message": "Entry saved", "similar_posts" : similar_posts}), 201
     else:
