@@ -5,12 +5,12 @@ import google.genai as genai
 from dotenv import load_dotenv
 import os
 from pydantic import BaseModel, Field
+from groq import Groq
 
 # Load environment variables
 load_dotenv()
 
-#MODEL = "gemini-2.5-flash-lite"
-MODEL = "gemini-3.flash-preview"
+MODEL = "openai/gpt-oss-120b" 
 EMBEDING_MODEL = "gemini-embedding-001"
 EMBEDING_SIZE = 512
 
@@ -22,12 +22,14 @@ class Chunk(BaseModel):
 
 class LLMCaller:
     def __init__(self):
-        self.api_key = os.getenv('GEMINI_API_KEY')
+        self.api_key = os.getenv('GROQ_API_KEY')
         if not self.api_key:
-            raise ValueError("GEMINI_API_KEY not found in environment variables")
+            raise ValueError("GROQ_API_KEY not found in environment variables")
 
-        self.client = genai.Client(api_key=self.api_key)
-        
+        self.client = Groq(api_key=self.api_key) 
+
+        self.embedding_client = genai.Client()
+
         self.deepl_auth_key = os.getenv('DEEPL_API_KEY')
         if not self.deepl_auth_key:
             raise ValueError("DEEPL_API_KEY not found in environment variables")
@@ -42,28 +44,41 @@ class LLMCaller:
         if detect(text) != "en":
             text = self.translate_to_english(text)
         
-        response = self.client.models.\
-            generate_content(model = MODEL,
-                             contents=prompts.get_umbrella_terms(text),
-                             )
+        response = self.client.chat.completions. \
+            create( 
+                model = MODEL,
+                messages=[
+                    {
+                        "role" : "user",
+                        "content":prompts.get_umbrella_terms(text)
+                    }
+                ],
+                
+            )
 
-        return response.text
+        return response.choices[0].message.content
 
 
     def get_pieces_to_vector(self, text: str) -> list[str]:
-        response = self.client.models.generate_content(
+        response = self.client.chat.completions.create(
             model = MODEL,
-            contents = prompts.get_chunks(text),
-            config=genai.types.GenerateContentConfig(
-                response_mime_type= "application/json",
-                response_schema= list[Chunk]
+            messages = [
+                {
+                    "role" : "user",
+                    "content" : prompts.get_chunks(text)
+                }
+            ],
+            response_format = {
+                    "type" : "json_schema",
+                    "json_schema" : prompts.text_chunks_schema 
+                }
             )
-        )
 
-        return response.text
+        return response.choices[0].message.content
+
 
     def get_embeddings(self, list_of_chunks: list[str]) -> list[float]:
-        response = self.client.models.embed_content(
+        response = self.embedding_client.models.embed_content(
             model=EMBEDING_MODEL,
             contents=list_of_chunks,
             config=genai.types.EmbedContentConfig(output_dimensionality=768,

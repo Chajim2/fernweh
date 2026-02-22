@@ -2,6 +2,7 @@
 requests
 flask
 google-genai
+groq
 deepl
 dotenv
 argon2-cffi
@@ -10,3 +11,4 @@ PyJwt
 flask-cors
 sqliteai-vector
 pysqlite3
+groq

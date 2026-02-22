@@ -1,6 +1,6 @@
-#@host = http://127.0.0.1:5000
+@host = http://127.0.0.1:5000
 
-@host = https://chajim.pythonanywhere.com/ 
+#@host = https://chajim.pythonanywhere.com/ 
 ### GET simple aplive check
 GET {{host}}
 
@@ -10,7 +10,7 @@ GET {{host}}
 POST {{host}}/login
 Content-Type: application/json
 
-{"username": "{{DEBUG_USER2}}", "password": "{{DEBUG_PASS2}}"}
+{"username": "{{DEBUG_USER1}}", "password": "{{DEBUG_PASS1}}"}
 
 ### Use the login token in the next
 @token = {{login.response.body.$.id}}
@@ -19,7 +19,7 @@ Content-Type: application/json
 POST {{host}}/register
 Content-Type: application/json
 
-{"username": "{{DEBUG_USER2}}", "password": "{{DEBUG_PASS2}}"}
+{"username": "{{DEBUG_USER1}}", "password": "{{DEBUG_PASS1}}"}
 
 ### POST Save entry
 POST {{host}}/save_entry

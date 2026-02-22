@@ -1,3 +1,27 @@
+text_chunks_schema = {
+    "name": "chunks_schema",
+    "strict": True,
+    "schema": {
+        "type": "object",
+        "properties": {
+            "chunks": {  # Define 'chunks' as a property
+                "type": "array",
+                "items": {  
+                    "type": "object",
+                    "properties": {
+                        "text": {"type": "string"}
+                    },
+                    "required": ["text"],
+                    "additionalProperties" : False 
+                }
+            }
+        },
+        "required": ["chunks"],  # Ensure 'chunks' is a required property
+        "additionalProperties": False
+    }
+}
+
+
 def get_umbrella_terms(text):
     return (
             f"I have this text: {text} (end of text). Analyze the sentiment and emotions in the text and Generate 6 unique and evocative umbrella terms that capture the nuanced feelins expressed.\n"
@@ -35,15 +59,9 @@ INSTRUCTIONS:
    - Example transformation:
      Before: "I went there with him yesterday"
      After: "Petr went to Berlin with Pavel on March 15th"
-
-3. OUTPUT FORMAT
-   Return a valid JSON array on a single line with no extra whitespace:
-   ["Chunk 1 text here", "Chunk 2 text here", "Chunk 3 text here"]
-   
-   - Use double quotes for strings
-   - Escape internal quotes with backslash
-   - No newlines, no explanatory text, only the JSON array
 """
+
+
 
 def get_update_user_summary_prompt(new_entry, summary):
     return (
