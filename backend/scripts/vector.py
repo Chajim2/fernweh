@@ -1,4 +1,6 @@
 from scripts.ai import LLMCaller
+from scripts.db_utils import get_db
+import json
 
 llmcaller = LLMCaller()
 
@@ -12,6 +14,5 @@ def vectorize(chunks: dict[str, list[dict[str, str]]]) -> list[list[float]]:
     print("HAHA", chunks)
     list_of_chunks = [chunk['text'] for chunk in chunks['chunks']]
     response = llmcaller.get_embeddings(list_of_chunks)
-
-    return [emb.values for emb in response] 
-
+    print("OH MY GOD:", type(response[0].values))
+    return [emb.values for emb in response]

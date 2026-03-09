@@ -197,18 +197,24 @@ class DiaryDatabase:
         cursor = conn.cursor()
 
         cursor.execute('''
-            SELECT de.id
-            FROM vector_full_scan('vector_chunks', 'embedding', vector_as_f32(?)) as v
+            SELECT de.id, v.distance
+            FROM vector_full_scan('vector_chunks', 'embedding', vector_as_f32(?), ?) as v
             JOIN vector_chunks vc ON vc.rowid = v.rowid
             JOIN diary_entries de ON de.id = vc.post_id
-            JOIN friendships fs ON fs.friend_id = de.authorid 
-            WHERE fs.user_id = ?
+            WHERE de.authorid = ?
+            OR EXISTS (
+                SELECT 1 FROM friendships fs
+                WHERE fs.user_id = ? AND fs.friend_id = de.authorid
+            )
             ORDER BY v.distance
             LIMIT ?
-        ''', (json.dumps(vector), user_id, n))
-
+            ''', (json.dumps(vector), n, user_id, user_id, n))
+        
         result = cursor.fetchall()
-        return [row[0] for row in result]
+        #for row in result:
+         #   print(f"id={row[0]} distance={row[1]:.4f}")
+
+        return [(row[0], row[1]) for row in result]
 
 
     def add_friend(self, friend_name, user_id):

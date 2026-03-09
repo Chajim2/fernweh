@@ -30,7 +30,8 @@ with app.app_context():
 CORS(app)
  
 llmcaller = LLMCaller()
-
+SIMILAR_POSTS_PER_CHUNK = 20
+CHUNKS_TO_FETCH = 10
 
 @app.route('/')
 def hello_world():
@@ -111,12 +112,12 @@ def save_entry(id, data):
         #if profile and 'summary' in profile:
          #   llmcaller.update_user_summary(data['text'], profile['summary'])
 
-        # have to decide the number of ids ima send back 
         similar_posts = []
         for vector in vector_list:
-            similar_posts.extend(db.find_similiar_vectors(vector, id, 3))
+            similar_posts.extend(db.find_similiar_vectors(vector, id, SIMILAR_POSTS_PER_CHUNK))
 
-        similar_posts = list(set(similar_posts)) # remove duplicates
+        similar_posts = [post[0] for post in similar_posts[1:CHUNKS_TO_FETCH]] 
+            #using [1:] to skip the just created entry
 
         return jsonify({"message": "Entry saved", "similar_posts" : similar_posts}), 201
     else:

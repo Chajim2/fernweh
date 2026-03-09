@@ -19,21 +19,21 @@ Content-Type: application/json
 POST {{host}}/register
 Content-Type: application/json
 
-{"username": "{{DEBUG_USER1}}", "password": "{{DEBUG_PASS1}}"}
+{"username": "{{DEBUG_USER2}}", "password": "{{DEBUG_PASS2}}"}
 
 ### POST Save entry
 POST {{host}}/save_entry
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
-{"id" : "{{token}}", "text": "Had a good lunch today. Saw a stranger get robbed, poor fella.", "emotions" : "Good"}
+{"id" : "{{token}}", "text": "I saw a guy get mugged today", "emotions" : "Good"}
 
 ### POST Get emotions
 POST {{host}}/get_emotions
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
-{"id" : "{{token}}", "text": "Had a good lunch today. Saw a stranger get killed, poor fella.", "emotions" : "Good"}
+{"id" : "{{token}}", "text": "I really wanna feel nature and hear some birds", "emotions" : "Good"}
 
 
 ### POST Add friend 
@@ -58,7 +58,18 @@ Authorization: Bearer {{token}}
 
 {"id" : "{{token}}", "entry_ids" : [2,3]}
 
+### POST Get friends
+POST {{host}}/get_friends
+Content-Type: application/json
+Authorization: Bearer {{token}}
 
+{"id" : "{{token}}"}
 
+### POST Get all entries (for user their friends)
+POST {{host}}/get_all_entries
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"id" : "{{token}}"}
 
 

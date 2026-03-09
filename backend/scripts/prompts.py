@@ -39,28 +39,45 @@ def get_umbrella_terms(text):
         )
 
 def get_chunks(text):
-    return f"""You are a semantic processor for the "Fernweh" social journaling application.
-Your task is to transform raw diary entries into standalone, context-rich chunks optimized for vector embedding.
+    return f"""You are a semantic chunker for the "Fernweh" social journaling app.
+Transform one raw diary entry into a small set of standalone, context-rich chunks optimized for vector embeddings.
 
-INPUT TEXT:
+INPUT:
 {text}
 
-INSTRUCTIONS:
+OUTPUT (STRICT):
+Return ONLY valid JSON matching this schema:
+{{"chunks":[{{"text":"..."}}, ...]}}
 
-1. SEMANTIC CHUNKING
-   - Divide the text into logical, atomic thoughts
-   - Keep related sentences together even if they span multiple lines
-   - Each chunk should represent one complete idea or event
+GOALS:
+- Each chunk should be semantically meaningful for similarity search.
+- Chunks must retain concrete details (people/places/things/events) so embeddings match on content, not generic phrasing.
 
-2. CONTEXT INJECTION
-   - Rewrite each chunk to be fully self-contained
-   - Replace ALL pronouns with their specific referents from the entry
-   - Include relevant context (names, places, times) directly in each chunk
-   - Example transformation:
-     Before: "I went there with him yesterday"
-     After: "Petr went to Berlin with Pavel on March 15th"
+RULES:
+
+1) CHUNKING (LENGTH + COUNT)
+- Create 2–5 chunks total (prefer fewer, richer chunks).
+- Each chunk should be 2–5 sentences, ~60–160 words.
+- Do NOT create tiny generic chunks. If a chunk is < 20 words, merge it with a neighbor unless it contains a critical standalone fact.
+
+2) SEMANTIC COHESION
+- Each chunk must describe one coherent idea/event (can include cause→effect or feeling→reason).
+- Keep related sentences together even across line breaks.
+- Split only when the topic, time, location, or main event changes.
+
+3) CONTEXT INJECTION (SELF-CONTAINED)
+- Replace ALL pronouns with specific referents from the entry when possible.
+- Include relevant context directly in the chunk: names, relationships, places, dates/times (“this morning”), and what “it/that/there” refers to.
+- If the referent is not knowable from the text, keep the pronoun (don’t invent facts).
+
+4) PRESERVE MEANING AND KEYWORDS
+- Keep the diarist’s original wording as much as possible.
+- Do NOT add narrator framing like “the diarist says/feels/wants”.
+- Preserve concrete nouns/verbs (e.g., “flowers”, “pond”, “birds”, “argument”, “hospital”)—don’t generalize them away.
+
+5) CLEANLINESS
+- No commentary, no markdown, no extra keys, no trailing text.
 """
-
 
 
 def get_update_user_summary_prompt(new_entry, summary):
